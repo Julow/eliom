@@ -20,9 +20,9 @@
 open Js_of_ocaml
 open Eliom_lib
 
-(* This the core of [Eliom_content] without its dependencies to [Eliom_service] et al.
-   Its name is not [Eliom_content_base] because this would suggest the sharing
-   between server and client. *)
+(* This the core of [Eliom_content] without its dependencies to [Eliom_service]
+   et al. Its name is not [Eliom_content_base] because this would suggest the
+   sharing between server and client. *)
 
 (*****************************************************************************)
 
@@ -455,7 +455,8 @@ module Html = struct
   end
 
   module D = struct
-    (* This is [Eliom_content.Xml] adapted such that request nodes are produced *)
+    (* This is [Eliom_content.Xml] adapted such that request nodes are
+       produced *)
     module Xml' = struct
       include Xml
 

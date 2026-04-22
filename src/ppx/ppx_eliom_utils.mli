@@ -38,7 +38,7 @@ module Context : sig
   type t =
     [ `Server (* [%%server ... ] *)
     | `Client (* [%%client ... ] *)
-    | `Shared (* [%%shared  ... ] *)
+    | `Shared (* [%%shared ... ] *)
     | `Fragment of server * bool (* [%client ... ] *)
     | `Escaped_value of server (* [%%server [%client ~%( ... ) ] ] *)
     | `Injection of client (* [%%client ~%( ... ) ] *) ]

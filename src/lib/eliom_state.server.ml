@@ -307,9 +307,8 @@ let rec close_service_state_if_empty ~scope ?secure () =
     in
     match scope with
     | `Session _ ->
-        (*VVV ???        (match !(c.Eliom_common.sc_session_group) with
-          | (_, _, Right _) (* no group *)
-              when *)
+        (*VVV ??? (match !(c.Eliom_common.sc_session_group) with | (_, _, Right
+          _) (* no group *) when *)
         if
           Eliommod_sessiongroups.Data.group_size
             ( Eliom_common.get_site_dir_string sitedata
@@ -328,9 +327,9 @@ let rec close_service_state_if_empty ~scope ?secure () =
           Eliommod_sessiongroups.Data.remove
             c.Eliom_common.sc_session_group_node
     | `Session_group scope_hierarchy ->
-        (* There is a browser session, we do not close the group,
-           but we may close the browser session (this will close
-           the group if it is empty). *)
+        (* There is a browser session, we do not close the group, but we may
+           close the browser session (this will close the group if it is
+           empty). *)
         close_service_state_if_empty ~scope:(`Session scope_hierarchy) ?secure
           ()
   with Not_found -> ()
@@ -366,16 +365,15 @@ let rec close_volatile_state_if_empty ~scope ?secure () =
       | _ -> ()
     )
     | `Client_process _ -> ()
-    (* This should never occur, because we always have tab session data
-   when we have a tab session (at least the change_page_event).
-        if (sitedata.Eliom_common.not_bound_in_data_tables
-              c.Eliom_common.dc_hvalue)
-        then Eliommod_sessiongroups.Data.remove
-          c.Eliom_common.dc_session_group_node *)
+    (* This should never occur, because we always have tab session data when we
+       have a tab session (at least the change_page_event). if
+       (sitedata.Eliom_common.not_bound_in_data_tables c.Eliom_common.dc_hvalue)
+       then Eliommod_sessiongroups.Data.remove
+       c.Eliom_common.dc_session_group_node *)
     | `Session_group scope_hierarchy ->
-        (* There is a browser session, we do not close the group,
-           but we may close the browser session (this will close
-           the group if it is empty). *)
+        (* There is a browser session, we do not close the group, but we may
+           close the browser session (this will close the group if it is
+           empty). *)
         close_volatile_state_if_empty ~scope:(`Session scope_hierarchy) ?secure
           ()
   with Not_found -> ()
@@ -424,8 +422,8 @@ let unset_service_session_group ?set_max
     in
     c.Eliom_common.sc_session_group_node <- node;
     c.Eliom_common.sc_session_group := n;
-    (* Now we want to close the session if it has not data inside
-       and no tab sessions *)
+    (* Now we want to close the session if it has not data inside and no tab
+       sessions *)
     close_service_state_if_empty
       ~scope:(scope :> Eliom_common.user_scope)
       ?secure ()
@@ -498,8 +496,8 @@ let unset_volatile_data_session_group ?set_max
     in
     c.Eliom_common.dc_session_group_node <- node;
     c.Eliom_common.dc_session_group := n;
-    (* Now we want to close the session if it has not data inside
-       and no tab sessions *)
+    (* Now we want to close the session if it has not data inside and no tab
+       sessions *)
     close_volatile_state_if_empty
       ~scope:(scope :> Eliom_common.user_scope)
       ?secure ()
@@ -779,14 +777,11 @@ let set_service_cookie_exp_date ~cookie_scope ?secure t =
   | None -> exp := Eliom_common.CEBrowser
   | Some t -> exp := Eliom_common.CESome t
 
-(*
-   let get_service_cookie_exp_date ?state_name ?(cookie_level = `Session) ?secure () =
-  try
-    let (_, _, _, _, exp) = find_service_cookie_only ?state_name ~cookie_level ~secure () in
-  let exp = c.Eliom_common.sc_cookie_exp in
-    !exp
-  with Not_found | Eliom_common.Eliom_Session_expired -> Eliom_common.CEBrowser
-*)
+(* let get_service_cookie_exp_date ?state_name ?(cookie_level = `Session)
+   ?secure () = try let (_, _, _, _, exp) = find_service_cookie_only ?state_name
+   ~cookie_level ~secure () in let exp = c.Eliom_common.sc_cookie_exp in !exp
+   with Not_found | Eliom_common.Eliom_Session_expired ->
+   Eliom_common.CEBrowser *)
 
 let set_volatile_data_cookie_exp_date ~cookie_scope ?secure t =
   let c =
@@ -970,8 +965,8 @@ let get_table_key_ ~table:(scope, secure, table)
       -> unit
       -> Eliom_common.one_data_cookie_info
       ) =
-  (* The key in the table is the cookie for client processes and sessions,
-     and the group name for groups *)
+  (* The key in the table is the cookie for client processes and sessions, and
+     the group name for groups *)
   let get_cookie () =
     let cookie_scope = Eliom_common.cookie_scope_of_user_scope scope in
     let c = find_cookie ~cookie_scope ~secure_o:(Some secure) () in
@@ -1014,8 +1009,8 @@ let remove_volatile_data ~table () =
       get_table_key_ ~table Eliommod_datasess.find_data_cookie_only
     in
     Eliom_common.SessionCookies.remove table key;
-    (* Now we want to close the session if it has not data inside
-       and no group and no sub sessions *)
+    (* Now we want to close the session if it has not data inside and no group
+       and no sub sessions *)
     close_volatile_state_if_empty ~scope ~secure ()
   with Not_found | Eliom_common.Eliom_Session_expired -> ()
 
@@ -1150,17 +1145,13 @@ module Ext = struct
 
   (*VVV Do we need this? + check
 
-  (* The following function returns the group to which belongs
-     a session or client process state: *)
-  let group_of ~state:(_cookie, (_, _, _, _, sgr, _sgrnode)) =
-    match Eliommod_sessiongroups.Serv.find_node_in_group_of_groups !sgr with
-      | Some a -> a
-      | None -> (* the group of a tab session,
-                   that is, the browser session associated. *)
-        Eliommod_sessiongroups.make_full_named_group_name_
-          ~cookie_level:`Client_process sitedata cookie
-        (*VVV à vérifier *)
-  *)
+    (* The following function returns the group to which belongs a session or
+    client process state: *) let group_of ~state:(_cookie, (_, _, _, _, sgr,
+    _sgrnode)) = match Eliommod_sessiongroups.Serv.find_node_in_group_of_groups
+    !sgr with | Some a -> a | None -> (* the group of a tab session, that is,
+    the browser session associated. *)
+    Eliommod_sessiongroups.make_full_named_group_name_
+    ~cookie_level:`Client_process sitedata cookie (*VVV à vérifier *) *)
 
   let volatile_data_group_state ?(scope = Eliom_common.default_group_scope)
       group_name =
@@ -1406,11 +1397,9 @@ module Ext = struct
   exception Wrong_scope
 
   module Low_level = struct
-    (* We have a dynamic scope checking here.
-       Would probably be possible to use phantom types again to check this
-       statically. I don't want to make the types more complex for now.
-       -- Vincent
-    *)
+    (* We have a dynamic scope checking here. Would probably be possible to use
+       phantom types again to check this statically. I don't want to make the
+       types more complex for now. -- Vincent *)
 
     let check_scopes table_scope state_scope =
       if table_scope <> state_scope then raise Wrong_scope

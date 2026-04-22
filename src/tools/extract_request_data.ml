@@ -1,8 +1,7 @@
-(*
-   Extract __eliom_request_data from an HTML page
+(* Extract __eliom_request_data from an HTML page
 
-ocaml str.cma ./extract_request_data.ml < /tmp/index.html | ocaml ./parse_request_data.ml
-*)
+   ocaml str.cma ./extract_request_data.ml < /tmp/index.html | ocaml
+   ./parse_request_data.ml *)
 
 let read ch =
   let b = Buffer.create 1024 in

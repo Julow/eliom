@@ -149,9 +149,8 @@ let get_page now ({Eliom_common.request = ri; session_info = si; _} as info)
                 match si.Eliom_common.si_state_info with
                 | Eliom_common.RAtt_no, Eliom_common.RAtt_no -> fail exn
                 | g, Eliom_common.RAtt_anon _ | g, Eliom_common.RAtt_named _ ->
-                    (* There was a POST state.
-                          We remove it, and remove POST parameters.
-                    *)
+                    (* There was a POST state. We remove it, and remove POST
+                       parameters. *)
                     Logs.info ~src:section (fun fmt ->
                       fmt "Link too old. Try without POST parameters:"
                     );
@@ -175,10 +174,8 @@ let get_page now ({Eliom_common.request = ri; session_info = si; _} as info)
                          {info with Eliom_common.request; session_info}
                 | Eliom_common.RAtt_named _, Eliom_common.RAtt_no
                 | Eliom_common.RAtt_anon _, Eliom_common.RAtt_no ->
-                    (* There was a GET state, but no POST state.
-                     We remove it with its parameters,
-                     and remove POST parameters.
-                    *)
+                    (* There was a GET state, but no POST state. We remove it
+                       with its parameters, and remove POST parameters. *)
                     Logs.info ~src:section (fun fmt ->
                       fmt
                         "Link to old. Trying without GET state parameters and POST parameters:"
@@ -360,9 +357,8 @@ let make_naservice now
           , None
           )
     with Not_found -> (
-      (* The non-attached service has not been found.
-      We call the same URL without non-attached parameters.
-     *)
+      (* The non-attached service has not been found. We call the same URL
+         without non-attached parameters. *)
       match si.Eliom_common.si_nonatt_info with
       | Eliom_common.RNa_no -> assert false
       | Eliom_common.RNa_post_ _ | Eliom_common.RNa_post' _ ->

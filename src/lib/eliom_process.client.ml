@@ -32,9 +32,9 @@ let get_set_js_serverside_value r name =
       match !r with
       | Some s -> s
       | None ->
-          (* if variable toto does not exist,
-         Js.Unsafe.variable "toto" fails, but
-         Js.Unsafe.get Js.Unsafe.global (Js.string "toto") returns undefined *)
+          (* if variable toto does not exist, Js.Unsafe.variable "toto" fails,
+             but Js.Unsafe.get Js.Unsafe.global (Js.string "toto") returns
+             undefined *)
           Js.Optdef.case
             (Js.def (Js.Unsafe.get Js.Unsafe.global (Js.string name)))
             (fun () ->
@@ -88,10 +88,9 @@ let ( set_request_template
 let appl_name =
   lazy
     (let _, v, _ =
-       (* We are using an appl cookie for this,
-          and not a JS variable,
-          because we want to send it back with each request.
-          For mobile apps, we set the cookie from JS variable. *)
+       (* We are using an appl cookie for this, and not a JS variable, because
+          we want to send it back with each request. For mobile apps, we set the
+          cookie from JS variable. *)
        Ocsigen_cookie_map.Map_inner.find Eliom_common.appl_name_cookie_name
          (Ocsigen_cookie_map.Map_path.find
             (get_sitedata ()).Eliom_types.site_dir

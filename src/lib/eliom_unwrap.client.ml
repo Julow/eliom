@@ -20,16 +20,13 @@
 (* TODO: implement with WeakMap when standardised:
    https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/WeakMap
 
-class type ['a,'b] weakMap = object
-  method get : 'a -> 'b Js.optdef Js.meth
-  method set : 'a -> 'b -> unit Js.meth
-  method has : 'a -> bool Js.t Js.meth
-end
+   class type ['a,'b] weakMap = object method get : 'a -> 'b Js.optdef Js.meth
+   method set : 'a -> 'b -> unit Js.meth method has : 'a -> bool Js.t Js.meth
+   end
 
-let weakMap : ('a,'b) weakMap Js.t Js.constr = Js.Unsafe.global##_WeakMap
+   let weakMap : ('a,'b) weakMap Js.t Js.constr = Js.Unsafe.global##_WeakMap
 
-let map : (Obj.t,Obj.t) weakMap Js.t = jsnew weakMap ()
-*)
+   let map : (Obj.t,Obj.t) weakMap Js.t = jsnew weakMap () *)
 
 open Js_of_ocaml
 open Eliom_lib

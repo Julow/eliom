@@ -216,8 +216,8 @@ let attach :
      | SNa_post' _ -> fallbackkind.get_name (*VVV check *)
      | SNa_post_csrf_safe _ -> fallbackkind.get_name (*VVV check *)
      | _ -> failwith error_msg
-   (*VVV Do we want to make possible to attach POST na coservices
-          on GET attached coservices? *)
+   (*VVV Do we want to make possible to attach POST na coservices on GET
+     attached coservices? *)
    and post_name =
      match na_name with
      | SNa_get_ _ -> SAtt_no
@@ -249,7 +249,7 @@ let xhr_with_cookies s =
     | XNever ->
         None
         (* actually this will be tested again later in
-              get_onload_form_creators *)
+           get_onload_form_creators *)
     | XSame_appl (_, tmpl) -> Some tmpl
 
 (* Some an = current_page_appl_name *)

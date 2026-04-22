@@ -127,10 +127,8 @@ let reconstruct_params_form l y =
   reconstruct_params_form (M.of_assoc_list l) y >>= fun (v, _) -> Some v
 
 let get_non_localized_get_parameters {name; param; _} =
-  (* Simplified version of the server-side code that
-     - only deals with GET params
-     - doesn't cache the result
-     - doesn't deal with files *)
+  (* Simplified version of the server-side code that - only deals with GET
+     params - doesn't cache the result - doesn't deal with files *)
   try
     Some
       (reconstruct_params_ param

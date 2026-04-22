@@ -31,10 +31,9 @@ val create_wrapper : ('a -> 'b) -> 'a wrapper
 
 (* == Internals
 
-   [wrap v] traverses the OCaml structure of the value [v], replacing
-   all included values [w] whose last object field (cf. [Obj.field])
-   is a wrapper created by [create_wrapper f] by [f w].
-*)
+   [wrap v] traverses the OCaml structure of the value [v], replacing all
+   included values [w] whose last object field (cf. [Obj.field]) is a wrapper
+   created by [create_wrapper f] by [f w]. *)
 val wrap : 'a -> 'a wrapped_value
 
 val empty_wrapper : 'a wrapper
@@ -42,8 +41,8 @@ val empty_wrapper : 'a wrapper
 
 (**/**)
 
-(* Since Eliom 5.0, unwrapping only works inside Eliom, so we are
-   hiding its API. *)
+(* Since Eliom 5.0, unwrapping only works inside Eliom, so we are hiding its
+   API. *)
 
 type unwrap_id
 type unwrapper

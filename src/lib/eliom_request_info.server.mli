@@ -285,21 +285,15 @@ val get_csp_ssl_sp : Eliom_common.server_params -> bool
 
 val get_sitedata_sp : sp:Eliom_common.server_params -> Eliom_common.sitedata
 
-(*
-   (** returns the cookie expiration date for the session,
-   in seconds, since the 1st of january 1970.
-   must have been set just before (not saved server side).
- *)
-val get_cookie_exp_date : ?state_name:string -> unit ->
-  unit -> float option
+(* (** returns the cookie expiration date for the session, in seconds, since the
+   1st of january 1970. must have been set just before (not saved server side).
+   *) val get_cookie_exp_date : ?state_name:string -> unit -> unit -> float
+   option
 
-(** returns the cookie expiration date for the persistent session,
-    in seconds, since the 1st of january 1970.
-   must have been set just before (not saved server side).
- *)
-val get_persistent_cookie_exp_date : ?state_name:string ->
-  unit -> unit -> float option
-*)
+   (** returns the cookie expiration date for the persistent session, in
+   seconds, since the 1st of january 1970. must have been set just before (not
+   saved server side). *) val get_persistent_cookie_exp_date :
+   ?state_name:string -> unit -> unit -> float option *)
 
 val find_sitedata : string -> Eliom_common.sitedata
 val get_si : Eliom_common.server_params -> Eliom_common.sess_info

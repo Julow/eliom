@@ -1,5 +1,5 @@
-(* The type of value whose evaluation on the server is delayed until
-   the value is wrapped.*)
+(* The type of value whose evaluation on the server is delayed until the value
+   is wrapped.*)
 type 'a request = 'a
 
 val from_fun : (unit -> 'a) -> 'a request

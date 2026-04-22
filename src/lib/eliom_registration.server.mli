@@ -223,19 +223,12 @@ module Flow5 :
      and type return = Eliom_service.non_ocaml
      and type result = block_content kind
 
-(*
-   (** Eliom service registration for services that return fragments of
-    TyXML's tree. *)
-module Make_typed_xml_registration
-  (Xml: Xml_sigs.Iterable)
-  (Typed_xml: Xml_sigs.Typed_xml with module Xml := Xml)
-  (E : sig type content end) :
-  Eliom_registration_sigs.S_with_create
-  with type page = E.content Typed_xml.elt list
-   and type options = unit
-   and type return = Eliom_service.non_ocaml
-   and type result = block_content kind
-*)
+(* (** Eliom service registration for services that return fragments of TyXML's
+   tree. *) module Make_typed_xml_registration (Xml: Xml_sigs.Iterable)
+   (Typed_xml: Xml_sigs.Typed_xml with module Xml := Xml) (E : sig type content
+   end) : Eliom_registration_sigs.S_with_create with type page = E.content
+   Typed_xml.elt list and type options = unit and type return =
+   Eliom_service.non_ocaml and type result = block_content kind *)
 
 (** {2 Untyped pages} *)
 
@@ -451,25 +444,19 @@ module String :
      and type return = Eliom_service.non_ocaml
      and type result = unknown_content kind
 
-(*
-   (** Eliom service registration for services that returns "byte"
-    contents with {% <<a_api project="ocsigenserver" text="Ocsigen's
-    streams"| module Ocsigen_stream>>%}. The page content is a pair
-    [(stream_creator_list, content_type)]. See also {!String} for
-    another kind of service that returns "byte" contents.
+(* (** Eliom service registration for services that returns "byte" contents with
+   {% <<a_api project="ocsigenserver" text="Ocsigen's streams"| module
+   Ocsigen_stream>>%}. The page content is a pair [(stream_creator_list,
+   content_type)]. See also {!String} for another kind of service that returns
+   "byte" contents.
 
-    Streams are created by calling the functions in the list and {%
-    <<a_api project="ocsigenserver"| val Ocsigen_stream.finalize>>%}
-    is called at the end of the stream. If something goes wrong while
-    processing a stream, the current stream is closed and the
-    following streams are not created. *)
-module Streamlist : Eliom_registration_sigs.S_with_create
-  with type page =
-         (unit -> string Ocsigen_stream.t Lwt.t) list * string
-   and type options = unit
-   and type return = Eliom_service.non_ocaml
-   and type result = unknown_content kind
-*)
+   Streams are created by calling the functions in the list and {% <<a_api
+   project="ocsigenserver"| val Ocsigen_stream.finalize>>%} is called at the end
+   of the stream. If something goes wrong while processing a stream, the current
+   stream is closed and the following streams are not created. *) module
+   Streamlist : Eliom_registration_sigs.S_with_create with type page = (unit ->
+   string Ocsigen_stream.t Lwt.t) list * string and type options = unit and type
+   return = Eliom_service.non_ocaml and type result = unknown_content kind *)
 
 (** {2 Customizing registration} *)
 

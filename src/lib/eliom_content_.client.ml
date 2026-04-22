@@ -304,7 +304,8 @@ struct
       let class_list = elt##.classList in
       let l = class_list##.length in
       for i = l - 1 downto 0 do
-        (* /!\ use downto because the list is re-ordered after each add/remove *)
+        (* /!\ use downto because the list is re-ordered after each
+           add/remove *)
         Js.Optdef.iter class_list##(item i) (fun cl -> class_list##(remove cl))
       done
 

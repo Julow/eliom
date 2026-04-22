@@ -43,12 +43,10 @@ let eid {Location.txt; loc} = Exp.ident ~loc {loc; txt = Longident.Lident txt}
 let format_args = function [] -> unit () | [e] -> e | l -> Exp.tuple l
 let pat_args = function [] -> punit () | [p] -> p | l -> Pat.tuple l
 
-(* We use a strong hash (MD5) of the file name.
-   We only keep the first 36 bit, which should be well enough: with
-   256 files, the likelihood of a collision is about one in two
-   millions.
-   These bits are encoded using an OCaml-compatible variant of Base
-   64, as the hash is used to generate OCaml identifiers. *)
+(* We use a strong hash (MD5) of the file name. We only keep the first 36 bit,
+   which should be well enough: with 256 files, the likelihood of a collision is
+   about one in two millions. These bits are encoded using an OCaml-compatible
+   variant of Base 64, as the hash is used to generate OCaml identifiers. *)
 let file_hash loc =
   let s = Digest.string (Filename.basename loc.Location.loc_start.pos_fname) in
   let e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_'" in
@@ -60,9 +58,9 @@ let file_hash loc =
     Bytes.set o i e.[(((g p lsl 8) + g (p + 1)) lsr d) land 63]
   done;
   for i = 0 to 4 do
-    (* Prevent problematic '_ pattern. This confuses our sed
-       invocation in eliomc. Simply replacing the pattern here is
-       easier than tightening the sed expression. *)
+    (* Prevent problematic '_ pattern. This confuses our sed invocation in
+       eliomc. Simply replacing the pattern here is easier than tightening the
+       sed expression. *)
     if Bytes.get o i = '\'' && Bytes.get o (i + 1) = '_' then Bytes.set o i 'Z'
   done;
   Bytes.to_string o
@@ -386,8 +384,8 @@ module Cmo = struct
     in
     go S.empty ty
 
-  (* We use the same location for all nodes of the constructed type,
-     which is an approximation but sufficient for error reporting. *)
+  (* We use the same location for all nodes of the constructed type, which is an
+     approximation but sufficient for error reporting. *)
   let type_of_out_type ?(loc = Location.none) ty =
     let open Outcometree in
     let open Parsetree in
@@ -572,7 +570,7 @@ module Context = struct
   type t =
     [ `Server (* [%%server ... ] *)
     | `Client (* [%%client ... ] *)
-    | `Shared (* [%%shared  ... ] *)
+    | `Shared (* [%%shared ... ] *)
     | `Fragment of server * bool (* [%client ... ] *)
     | `Escaped_value of server (* [%shared ~%( ... ) ] *)
     | `Injection of client (* [%%client ~%( ... ) ] *) ]

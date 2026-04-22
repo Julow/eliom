@@ -622,10 +622,8 @@ module Html : sig
 
     (**/**)
 
-    (*
-       val get_custom_data : _ elt -> 'a Custom_data.t -> 'a
-    val set_custom_data : _ elt -> 'a Custom_data.t -> 'a -> unit
-    *)
+    (* val get_custom_data : _ elt -> 'a Custom_data.t -> 'a val set_custom_data
+       : _ elt -> 'a Custom_data.t -> 'a -> unit *)
 
     module Class : sig
       val contain : 'a elt -> string -> bool

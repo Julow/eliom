@@ -67,8 +67,8 @@ let server_type_file_dependencies line =
   | _ -> failwith "add_deps_of_type_mli"
 
 let rec on_each_line f ch =
-  (* BB Add option -one-line to the calls to ocamldep when we don't
-     support OCaml<4 any more. *)
+  (* BB Add option -one-line to the calls to ocamldep when we don't support
+     OCaml<4 any more. *)
   let rec aux lines =
     (* May fail only when lines=[], it is then handled by create_filter *)
     let line = input_line ch in

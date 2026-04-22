@@ -18,13 +18,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *)
 
-(* TODO: add missing functions to get
-   (almost) the same interface as server side *)
+(* TODO: add missing functions to get (almost) the same interface as server
+   side *)
 
-(* - Part of sp is reconstructed client side
-   - Another part is sent as application parameter (sitedata)
-   - Antother part is sent with each request
-*)
+(* - Part of sp is reconstructed client side - Another part is sent as
+   application parameter (sitedata) - Antother part is sent with each request *)
 
 open Js_of_ocaml
 open Eliom_lib
@@ -170,8 +168,8 @@ let get_csp_original_full_path_sp = get_csp_original_full_path
 let get_request_cookies = Eliom_process.get_request_cookies
 let get_request_template = Eliom_process.get_request_template
 
-(* The request data used when it is not sent by server
-   (i.e. when the client side process is initiated by client (mobile app...)) *)
+(* The request data used when it is not sent by server (i.e. when the client
+   side process is initiated by client (mobile app...)) *)
 let default_request_data =
   { Eliom_common.ejs_global_data = None
   ; ejs_request_data = [||]

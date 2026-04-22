@@ -36,8 +36,8 @@
     part.
 *)
 
-(* These two dual files are to be modified together
-   with compatibility issues in mind. *)
+(* These two dual files are to be modified together with compatibility issues in
+   mind. *)
 
 (** Event from server to client. *)
 module Down : sig

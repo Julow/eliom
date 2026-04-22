@@ -112,8 +112,8 @@ module Pass = struct
     | _ -> [Str.eval (sequence registrations)]
 
   (* We hoist the body of client fragments to enforce the correct scoping:
-     Identifiers declared earlier in the client section should not be
-     visible inside the client fragment (unless via escaped value). *)
+     Identifiers declared earlier in the client section should not be visible
+     inside the client fragment (unless via escaped value). *)
   let define_client_functions ~loc client_value_datas =
     match client_value_datas with
     | [] -> []

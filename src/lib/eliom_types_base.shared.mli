@@ -26,20 +26,14 @@ val sp : server_params
 
 (**/**)
 
-(*SGO* Server generated onclicks/onsubmits
-val a_closure_id : int
-val a_closure_id_string : string
-val get_closure_id : int
-val get_closure_id_string : string
-val post_closure_id : int
-val post_closure_id_string : string
+(*SGO* Server generated onclicks/onsubmits val a_closure_id : int val
+  a_closure_id_string : string val get_closure_id : int val
+  get_closure_id_string : string val post_closure_id : int val
+  post_closure_id_string : string
 
-val eliom_temporary_form_node_name : string
-*)
+  val eliom_temporary_form_node_name : string *)
 
-(*POSTtabcookies* forms with tab cookies in POST params:
-val add_tab_cookies_to_get_form_id : int
-val add_tab_cookies_to_get_form_id_string : string
-val add_tab_cookies_to_post_form_id : int
-val add_tab_cookies_to_post_form_id_string : string
-*)
+(*POSTtabcookies* forms with tab cookies in POST params: val
+  add_tab_cookies_to_get_form_id : int val add_tab_cookies_to_get_form_id_string
+  : string val add_tab_cookies_to_post_form_id : int val
+  add_tab_cookies_to_post_form_id_string : string *)

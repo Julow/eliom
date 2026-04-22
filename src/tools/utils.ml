@@ -96,7 +96,8 @@ let get_pkg_predicates pkgs =
 let with_autoload all_pkgs =
   if !autoload_predef
   then
-    (* Format.eprintf "\nAUTOLOADING PREDEF PKGS\n%s\n@." (String.concat ", " all_pkgs); *)
+    (* Format.eprintf "\nAUTOLOADING PREDEF PKGS\n%s\n@." (String.concat ", "
+       all_pkgs); *)
     "eliom.syntax.predef" :: all_pkgs
   else all_pkgs
 

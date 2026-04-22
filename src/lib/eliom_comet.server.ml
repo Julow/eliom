@@ -80,10 +80,9 @@ let fallback_global_service =
 
 let new_id = Eliom_lib.make_cryptographic_safe_string
 
-(* ocsigenserver needs to be modified for this to be configurable:
-   the connection is closed after a fixed amount of time
-   if the server does not send anything.
-   By default it is 20 seconds *)
+(* ocsigenserver needs to be modified for this to be configurable: the
+   connection is closed after a fixed amount of time if the server does not send
+   anything. By default it is 20 seconds *)
 let timeout_base = 20.
 let timeout_jitter = 0.1
 
@@ -220,11 +219,11 @@ end = struct
         | None -> [] (* should not happen *)
         | Some node -> [channel.ch_id, Eliom_comet_base.Data (Dlist.value node)]
       )
-      (* when the client is requesting the data after index i return
-           all data with index gretter or equal to i*)
+      (* when the client is requesting the data after index i return all data
+         with index gretter or equal to i*)
       | Eliom_comet_base.After i when i > channel.ch_index -> []
-      (* if the requested value is not in the queue anymore, tell
-           the client that its request was dropped *)
+      (* if the requested value is not in the queue anymore, tell the client
+         that its request was dropped *)
       | Eliom_comet_base.After i
         when i <= channel.ch_index - Dlist.size channel.ch_content ->
           [channel.ch_id, Eliom_comet_base.Full]
@@ -354,8 +353,8 @@ end = struct
   type channel =
     | Events of
         { queue : string Eliom_comet_base.channel_data Queue.t
-        ; (* Reference to the event stream, so that it does not
-             get garbage collected *)
+        ; (* Reference to the event stream, so that it does not get garbage
+             collected *)
           mutable events : Obj.t option
         }
     | Stream of
@@ -545,8 +544,8 @@ end = struct
             "attempting to request data on stateful service with a stateless request"
       | Eliom_comet_base.Stateful (Eliom_comet_base.Request_data number) ->
           Logs.info ~src:section (fun fmt -> fmt "received request %i" number);
-          (* if a new connection occurs for a service, we reply
-           immediately to the previous with no data. *)
+          (* if a new connection occurs for a service, we reply immediately to
+             the previous with no data. *)
           new_connection handler;
           if snd handler.hd_last = number
           then Lwt.return (fst handler.hd_last)
@@ -589,8 +588,7 @@ end = struct
               | Eliom_comet_base.Close channel -> close_channel' handler channel
               )
             (Array.to_list commands);
-          (* command connections are replied immediately by an
-                 empty answer *)
+          (* command connections are replied immediately by an empty answer *)
           Lwt.return (encode_downgoing [])
     in
     let {hd_service = Eliom_comet_base.Internal_comet_service (service, _); _} =
@@ -603,7 +601,8 @@ end = struct
       is never cleaned, but it is supposed that this won't be a
       problem as scope should be used in limited number *)
 
-  (* as of now only `Client_process scope are handled: so we only stock scope_hierarchy *)
+  (* as of now only `Client_process scope are handled: so we only stock
+     scope_hierarchy *)
   type handler_ref_table =
     ( Eliom_common.scope_hierarchy
     , handler option Eliom_reference.Volatile.eref

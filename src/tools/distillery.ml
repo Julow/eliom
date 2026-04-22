@@ -15,8 +15,8 @@ let eliom_template_dir =
 let distillery_basic = "client-server.basic", eliom_template_dir
 let template_path (tname, tpath) = tpath ^ "/" ^ tname
 
-(* Returns all lines of [file] as a string list. Returns an empty list
-   if [file] doesn't exist. *)
+(* Returns all lines of [file] as a string list. Returns an empty list if [file]
+   doesn't exist. *)
 let lines_of_file file =
   if not (Sys.file_exists file)
   then []

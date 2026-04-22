@@ -158,19 +158,18 @@ let do_request_data request_data =
   Logs.debug ~src:section (fun fmt ->
     fmt "Do request data (%d)" (Array.length request_data)
   );
-  (* On a request, i.e. after running the toplevel definitions, global_data
-     must contain at most empty sections_data lists, which stem from server-
-     only eliom files. *)
+  (* On a request, i.e. after running the toplevel definitions, global_data must
+     contain at most empty sections_data lists, which stem from server- only
+     eliom files. *)
   check_global_data !Eliom_client_core.global_data;
   Eliom_client_core.global_data := String_map.empty;
   Array.iter Eliom_client_core.Client_value.initialize request_data
 
 (* == Relink
 
-   Traverse the Dom representation of the page in order to register
-   "unique" nodes (or substitute previously known global nodes) and to
-   bind Eliom's event handlers.
-*)
+   Traverse the Dom representation of the page in order to register "unique"
+   nodes (or substitute previously known global nodes) and to bind Eliom's event
+   handlers. *)
 
 let get_element_cookies_info elt =
   Js.Opt.to_option
@@ -292,10 +291,9 @@ let relink_request_nodes root =
   if !Eliom_config.debug_timings
   then Console.console##(timeEnd (Js.string "relink_request_nodes"))
 
-(* Relinks a-elements, form-elements, and process nodes. The list of
-   closure nodes is returned for application on [relink_closure_node]
-   after the client values are initialized.
-*)
+(* Relinks a-elements, form-elements, and process nodes. The list of closure
+   nodes is returned for application on [relink_closure_node] after the client
+   values are initialized. *)
 let relink_page_but_client_values (root : Dom_html.element Js.t) =
   Logs.debug ~src:section (fun fmt -> fmt "Relink page");
   let ( a_nodeList
@@ -314,14 +312,12 @@ let relink_page_but_client_values (root : Dom_html.element Js.t) =
 
 (* == Rebuild event handlers
 
-   Event handlers inside the DOM tree are rebuilt from the closure map
-   sent with the request. The actual functions will be taken from the
-   client values.
+   Event handlers inside the DOM tree are rebuilt from the closure map sent with
+   the request. The actual functions will be taken from the client values.
 
-   It returns a single handler ([unit -> unit]) which captures all
-   onload event handlers found in the tree, and cancels the execution
-   when on raises [False] (cf. [raw_event_handler]).
-*)
+   It returns a single handler ([unit -> unit]) which captures all onload event
+   handlers found in the tree, and cancels the execution when on raises [False]
+   (cf. [raw_event_handler]). *)
 
 let is_closure_attrib, get_closure_name, get_closure_id =
   let v_prefix = Eliom_runtime.RawXML.closure_attr_prefix in
@@ -418,8 +414,7 @@ let relink_attribs (root : Dom_html.element Js.t) attribs attrib_nodeList =
 (* == Extract the request data and the request tab-cookies from a page
 
    See the corresponding function on the server side:
-   Eliom_registration.Eliom_appl_reg_make_param.make_eliom_data_script.
-*)
+   Eliom_registration.Eliom_appl_reg_make_param.make_eliom_data_script. *)
 
 let load_data_script page =
   Logs.debug ~src:section (fun fmt -> fmt "Load Eliom application data");
@@ -447,9 +442,8 @@ let load_data_script page =
   then Console.console##(timeEnd (Js.string "load_data_script"))
 
 (* == Scroll the current page such that the top of element with the id
-   [fragment] is aligned with the window's top. If the optional
-   argument [?offset] is given, ignore the fragment and scroll to the
-   given offset. *)
+   [fragment] is aligned with the window's top. If the optional argument
+   [?offset] is given, ignore the fragment and scroll to the given offset. *)
 
 let scroll_to_fragment ?offset fragment =
   match offset with
@@ -496,12 +490,11 @@ type tmp_elt =
 (* == Html elements
 
    Html elements are unwrapped lazily (cf. use of Xml.make_lazy in
-   unwrap_tyxml), because the unwrapping of process and request
-   elements needs access to the DOM.
+   unwrap_tyxml), because the unwrapping of process and request elements needs
+   access to the DOM.
 
-   All recently unwrapped elements are forced when resetting the
-   request nodes ([reset_request_nodes]).
-*)
+   All recently unwrapped elements are forced when resetting the request nodes
+   ([reset_request_nodes]). *)
 
 let unwrap_tyxml tmp_elt =
   let elt =
@@ -510,9 +503,8 @@ let unwrap_tyxml tmp_elt =
     | RE elt -> elt
   in
   Logs.debug ~src:section (fun fmt -> fmt "Unwrap tyxml");
-  (* Do not rebuild dom node while unwrapping, otherwise we
-       don't have control on when "onload" event handlers are
-       triggered. *)
+  (* Do not rebuild dom node while unwrapping, otherwise we don't have control
+     on when "onload" event handlers are triggered. *)
   let elt =
     let context = "unwrapping (i.e. utilize it in whatsoever form)" in
     Xml.make_lazy ~id:tmp_elt.tmp_node_id
@@ -569,9 +561,8 @@ let unwrap_tyxml tmp_elt =
 let unwrap_client_value cv =
   Eliom_client_core.Client_value.find
     ~instance_id:(Eliom_runtime.Client_value_server_repr.instance_id cv)
-(* BB By returning [None] this value will be registered for late
-     unwrapping, and late unwrapped in Client_value.initialize as
-     soon as it is available. *)
+(* BB By returning [None] this value will be registered for late unwrapping, and
+   late unwrapped in Client_value.initialize as soon as it is available. *)
 
 let unwrap_global_data (global_data', _) =
   Eliom_client_core.global_data :=
@@ -618,16 +609,14 @@ let add_string_event_listener o e f capt : unit =
 
 (* == Associate data to state of the History API.
 
-   We store an 'id' in the state, and store data in an association
-   table in the session storage. This allows avoiding "replaceState"
-   that has not a coherent behaviour between Chromium and Firefox
-   (2012/03).
+   We store an 'id' in the state, and store data in an association table in the
+   session storage. This allows avoiding "replaceState" that has not a coherent
+   behaviour between Chromium and Firefox (2012/03).
 
-   Storing the scroll position in the state is not required with
-   Chrome or Firefox: they automatically store and restore the
-   correct scrolling while browsing the history. However this
-   behaviour in not required by the HTML5 specification (only
-   suggested). *)
+   Storing the scroll position in the state is not required with Chrome or
+   Firefox: they automatically store and restore the correct scrolling while
+   browsing the history. However this behaviour in not required by the HTML5
+   specification (only suggested). *)
 
 [@@@warning "-39"]
 
@@ -881,9 +870,8 @@ let get_state state_id : state =
     (Js.Optdef.case
        Dom_html.window##.sessionStorage
        (fun () ->
-         (* We use this only when the history API is
-             available. Sessionstorage seems to be available
-             everywhere the history API exists. *)
+         (* We use this only when the history API is available. Sessionstorage
+            seems to be available everywhere the history API exists. *)
          raise_error ~section "sessionStorage not available"
        )
        (fun s -> s##(getItem (state_key state_id)))
@@ -912,13 +900,10 @@ type ('a, +'b) server_function = 'a -> 'b Lwt.t
 
 let only_replace_body = ref false
 let persist_document_head () = only_replace_body := true
-(*
-   Cordova does not allow to read from a file when using the WkWebview.
-So, CSS preloading does not work. This provide a work-around.
-Also, with Chrome, the corresponding XHRs will block if other requests
-have been scheduled before, even when the CSS is cached. This can slow
-down page changes.
-*)
+(* Cordova does not allow to read from a file when using the WkWebview. So, CSS
+   preloading does not work. This provide a work-around. Also, with Chrome, the
+   corresponding XHRs will block if other requests have been scheduled before,
+   even when the CSS is cached. This can slow down page changes. *)
 
 let insert_base page =
   let b = Dom_html.createBase Dom_html.document in
@@ -951,13 +936,13 @@ let init_client_app ~app_name ?(ssl = false) ~hostname ?(port = 80) ~site_dir ()
   Logs.debug (fun fmt -> fmt "Eliom_client.init_client_app called.");
   Eliom_process.appl_name_r := Some app_name;
   Eliom_request_info.client_app_initialised := true;
-  (* For site_dir, we want no trailing slash. We tend to concatenate
-     it with relative paths, or treat it as a prefix to be removed
-     from other paths. The trailing slash would be burdensome.
+  (* For site_dir, we want no trailing slash. We tend to concatenate it with
+     relative paths, or treat it as a prefix to be removed from other paths. The
+     trailing slash would be burdensome.
 
-     In contrast, we do need the trailing slash in
-     cpi_original_full_path, because we do have the trailing slash in
-     page URLs., Hence the site_dir @ [""] below. *)
+     In contrast, we do need the trailing slash in cpi_original_full_path,
+     because we do have the trailing slash in page URLs., Hence the site_dir @
+     [""] below. *)
   Eliom_process.set_sitedata
     {Eliom_types.site_dir; site_dir_string = String.concat "/" site_dir};
   Eliom_process.set_info
@@ -1001,17 +986,15 @@ let set_base_url () =
 
 let dom_history_ready = ref false
 
-(* Function called (in Eliom_client_main), once when starting the app.
-   Either when sent by a server or initiated on client side.
+(* Function called (in Eliom_client_main), once when starting the app. Either
+   when sent by a server or initiated on client side.
 
-   For client apps, we read __eliom_server, __eliom_app_name,
-   __eliom_app_path JS variables set by the client app (via the HTML
-   file loading us).
+   For client apps, we read __eliom_server, __eliom_app_name, __eliom_app_path
+   JS variables set by the client app (via the HTML file loading us).
 
-   - __eliom_server   : remote Eliom server to contact
-   - __eliom_app_name : application name
-   - __eliom_app_path : path app is under. We use this path for calls to
-                        server functions (see Eliom_uri). *)
+   - __eliom_server : remote Eliom server to contact - __eliom_app_name :
+   application name - __eliom_app_path : path app is under. We use this path for
+   calls to server functions (see Eliom_uri). *)
 let init () =
   (* Initialize client app if the __eliom_server variable is defined *)
   ( if
@@ -1045,9 +1028,8 @@ let init () =
       ignore (Lazy.force js_data)
     )
     (fun global_data ->
-      (* Global data are in a separate file. We should not unmarshal
-          [js_data] right away but only once the client program has
-          been initialized. *)
+      (* Global data are in a separate file. We should not unmarshal [js_data]
+         right away but only once the client program has been initialized. *)
       ignore (Eliom_unwrap.unwrap_js global_data);
       Js.Unsafe.delete Js.Unsafe.global "__eliom_global_data"
     );
@@ -1059,10 +1041,9 @@ let init () =
   insert_base Dom_html.document;
   (* </base> *)
 
-  (* Decoding tab cookies.
-     2016-03 This was done at the beginning of onload below
-     but this makes it impossible to use cookies
-     during initialisation phase. I move this here. -- Vincent *)
+  (* Decoding tab cookies. 2016-03 This was done at the beginning of onload
+     below but this makes it impossible to use cookies during initialisation
+     phase. I move this here. -- Vincent *)
   Eliommod_cookies.update_cookie_table
     (Some (Eliom_process.get_info ()).cpi_hostname)
     (Eliom_request_info.get_request_cookies ());
@@ -1098,9 +1079,9 @@ let init () =
         relink_page_but_client_values root
       in
       do_request_data js_data.Eliom_common.ejs_request_data;
-      (* XXX One should check that all values have been unwrapped.
-            In fact, client values should be special and all other values
-            should be eagerly unwrapped. *)
+      (* XXX One should check that all values have been unwrapped. In fact,
+         client values should be special and all other values should be eagerly
+         unwrapped. *)
       let () =
         relink_attribs root js_data.Eliom_common.ejs_client_attrib_table
           attrib_nodeList
@@ -1165,11 +1146,10 @@ let create_request_ (type m) ?absolute ?absolute_path ?https
     ~(service : (_, _, m, _, _, _, _, _, _, _, _) Eliom_service.t) ?hostname
     ?port ?fragment ?keep_nl_params ?nl_params ?keep_get_na_params get_params
     post_params =
-  (* TODO: allow get_get_or_post service to return also the service
-     with the correct subtype. Then do use Eliom_uri.make_string_uri
-     and Eliom_uri.make_post_uri_components instead of
-     Eliom_uri.make_string_uri_ and
-     Eliom_uri.make_post_uri_components__ *)
+  (* TODO: allow get_get_or_post service to return also the service with the
+     correct subtype. Then do use Eliom_uri.make_string_uri and
+     Eliom_uri.make_post_uri_components instead of Eliom_uri.make_string_uri_
+     and Eliom_uri.make_post_uri_components__ *)
   match Eliom_service.which_meth service with
   | Eliom_service.Get' ->
       let ((_, get_params, _) as components) =
@@ -1200,12 +1180,10 @@ let create_request_ (type m) ?absolute ?absolute_path ?https
 let raw_call_service ?absolute ?absolute_path ?https ~service ?hostname ?port
     ?fragment ?keep_nl_params ?nl_params ?keep_get_na_params ?progress
     ?upload_progress ?override_mime_type get_params post_params =
-  (* with_credentials = true is necessary for client side apps when
-     we want the Eliom server to be different from the server for
-     static files (if any). For example when testing a mobile app
-     in a browser, with Cordova's Web server.
-     Also set with_credentials to true in CORS configuration.
-  *)
+  (* with_credentials = true is necessary for client side apps when we want the
+     Eliom server to be different from the server for static files (if any). For
+     example when testing a mobile app in a browser, with Cordova's Web server.
+     Also set with_credentials to true in CORS configuration. *)
   let with_credentials = not (Eliom_service.is_external service) in
   let* uri, content =
     match
@@ -1284,9 +1262,7 @@ let window_open ~window_name ?window_features ?absolute ?absolute_path ?https
 
 (* == Call caml service.
 
-   Unwrap the data and execute the associated onload event
-   handlers.
-*)
+   Unwrap the data and execute the associated onload event handlers. *)
 
 let unwrap_caml_content content =
   let r : 'a Eliom_runtime.eliom_caml_service_data =
@@ -1317,11 +1293,9 @@ let call_ocaml_service ?absolute ?absolute_path ?https ~service ?hostname ?port
 
 (* == Current uri.
 
-   This reference is used in [change_page_uri] and popstate event
-   handler to mimic browser's behaviour with fragment: we do not make
-   any request to the server, if only the fragment part of url
-   changes.
-*)
+   This reference is used in [change_page_uri] and popstate event handler to
+   mimic browser's behaviour with fragment: we do not make any request to the
+   server, if only the fragment part of url changes. *)
 
 let path_and_args_of_uri uri =
   let path_of_string s =
@@ -1352,8 +1326,8 @@ let set_current_uri, get_current_uri =
 
 (* == Function [change_url_string] changes the URL, without doing a request.
 
-   It uses the History API if present, otherwise we write the new URL
-   in the fragment part of the URL (see 'redirection_script' in
+   It uses the History API if present, otherwise we write the new URL in the
+   fragment part of the URL (see 'redirection_script' in
    'server/eliom_registration.ml'). *)
 
 let current_pseudo_fragment = ref ""
@@ -1499,9 +1473,8 @@ let change_url_string ~replace uri =
       Dom_html.window##.location##.hash := Js.string (url_fragment_prefix ^ uri)
   )
 
-(* == Function [change_url] changes the URL, without doing a request.
-   It takes a GET (co-)service as parameter and its parameters.
-*)
+(* == Function [change_url] changes the URL, without doing a request. It takes a
+   GET (co-)service as parameter and its parameters. *)
 
 let change_url ?(replace = false) ?absolute ?absolute_path ?https ~service
     ?hostname ?port ?fragment ?keep_nl_params ?nl_params params =
@@ -1563,9 +1536,8 @@ let replace_page ~do_insert_base new_page =
         new_body Dom_html.document##.body
     )
   else (
-    (* We insert <base> in the page.
-       The URLs of all other pages will be computed w.r.t.
-       the base URL. *)
+    (* We insert <base> in the page. The URLs of all other pages will be
+       computed w.r.t. the base URL. *)
     if do_insert_base then insert_base new_page;
     Dom.replaceChild Dom_html.document new_page
       Dom_html.document##.documentElement
@@ -1582,9 +1554,8 @@ let set_content_local ?offset ?fragment new_page =
     if !Eliom_config.debug_timings
     then Console.console##(timeEnd (Js.string "set_content_local"))
   and really_set () =
-    (* Inline CSS in the header to avoid the "flashing effect".
-       Otherwise, the browser start to display the page before
-       loading the CSS. *)
+    (* Inline CSS in the header to avoid the "flashing effect". Otherwise, the
+       browser start to display the page before loading the CSS. *)
     let preloaded_css =
       if !only_replace_body
       then Lwt.return_unit
@@ -1664,7 +1635,7 @@ let set_content ~replace ~uri ?offset ?fragment content =
           else Eliommod_dom.preload_css fake_page
         in
         (* Unique nodes of scope request must be bound before the
-         unmarshalling/unwrapping of page data. *)
+           unmarshalling/unwrapping of page data. *)
         relink_request_nodes fake_page;
         (* Put the loaded data script in action *)
         load_data_script fake_page;
@@ -1680,9 +1651,9 @@ let set_content ~replace ~uri ?offset ?fragment content =
         Eliommod_cookies.update_cookie_table host cookies;
         (* Wait for CSS to be inlined before substituting global nodes: *)
         let* () = preloaded_css in
-        (* Bind unique node (request and global) and register event
-         handler.  Relinking closure nodes must take place after
-         initializing the client values *)
+        (* Bind unique node (request and global) and register event handler.
+           Relinking closure nodes must take place after initializing the client
+           values *)
         let closure_nodeList, attrib_nodeList =
           relink_page_but_client_values fake_page
         in
@@ -1691,11 +1662,11 @@ let set_content ~replace ~uri ?offset ?fragment content =
         @@ fun () ->
         (* Really change page contents *)
         replace_page ~do_insert_base:false fake_page;
-        (* Initialize and provide client values. May need to access to
-         new DOM. Necessary for relinking closure nodes *)
+        (* Initialize and provide client values. May need to access to new DOM.
+           Necessary for relinking closure nodes *)
         do_request_data js_data.Eliom_common.ejs_request_data;
-        (* Replace closure ids in document with event handlers
-         (from client values) *)
+        (* Replace closure ids in document with event handlers (from client
+           values) *)
         let () =
           relink_attribs
             Dom_html.document##.documentElement
@@ -1707,7 +1678,7 @@ let set_content ~replace ~uri ?offset ?fragment content =
             js_data.Eliom_common.ejs_event_handler_table closure_nodeList
         in
         (* The request node table must be empty when nodes received via
-         call_ocaml_service are unwrapped. *)
+           call_ocaml_service are unwrapped. *)
         Eliom_client_core.reset_request_nodes ();
         Eliommod_dom.add_formdata_hack_onclick_handler ();
         dom_history_ready := true;
@@ -1831,10 +1802,10 @@ let rec handle_result ~replace ~uri result =
         reload ~replace ~uri ~fallback:Eliom_service.reload_action_https_hidden
   )
 
-(* == Main (exported) function: change the content of the page without
-   leaving the javascript application. See [change_page_uri] for the
-   function used to change page when clicking a link and
-   [change_page_{get,post}_form] when submiting a form. *)
+(* == Main (exported) function: change the content of the page without leaving
+   the javascript application. See [change_page_uri] for the function used to
+   change page when clicking a link and [change_page_{get,post}_form] when
+   submiting a form. *)
 and change_page :
     'get 'post 'meth 'attached 'co 'ext 'reg 'tipo 'gn 'pn.
        ?ignore_client_fun:bool
@@ -2035,7 +2006,7 @@ and reload_without_na_params ~replace ~uri ~fallback =
       change_page ~replace ~ignore_client_fun:true ~service:fallback () ()
     )
 
-(* Function used in "onclick" event handler of <a>.  *)
+(* Function used in "onclick" event handler of <a>. *)
 let change_page_uri_a ?cookies_info ?tmpl ?(get_params = []) full_uri =
   Logs.debug ~src:section_page (fun fmt -> fmt "Change page uri");
   with_progress_cursor
@@ -2091,7 +2062,7 @@ let change_page_uri ?replace full_uri =
       )
     )
 
-(* Functions used in "onsubmit" event handler of <form>.  *)
+(* Functions used in "onsubmit" event handler of <form>. *)
 
 let change_page_get_form ?cookies_info ?tmpl form full_uri =
   with_progress_cursor
@@ -2147,7 +2118,7 @@ let _ =
       Lwt.ignore_result (change_page_post_form ?cookies_info ?tmpl form href)
 
 (* == Main (internal) function: change the content of the page without leaving
-      the javascript application. *)
+   the javascript application. *)
 
 (* == Navigating through the history... *)
 
@@ -2224,12 +2195,11 @@ let () =
           let* () = Js_of_ocaml_lwt.Lwt_js_events.request_animation_frame () in
           scroll_to_fragment ~offset:state.position fragment;
           (* When we use iPhone, we need to wait for one more
-                   [request_animation_frame] before scrolling.The
-                   function [scroll_to_fragment] is called twice. In
-                   other words, we want to call [scroll_to_fragment]
-                   as early as possible so that the scroll position
-                   will not jump after the second [request_animation_frame]
-                   if the dom has already be painted after the first one. *)
+             [request_animation_frame] before scrolling.The function
+             [scroll_to_fragment] is called twice. In other words, we want to
+             call [scroll_to_fragment] as early as possible so that the scroll
+             position will not jump after the second [request_animation_frame]
+             if the dom has already be painted after the first one. *)
           Lwt.return_unit
         with Not_found -> (
           let session_changed = state_id.session_id <> session_id in
@@ -2314,8 +2284,8 @@ let () =
     in
     let revisit_wrapper full_uri state_id =
       Logs.debug ~src:section_page (fun fmt -> fmt "revisit_wrapper");
-      (* CHECKME: is it OK that set_state happens after the unload
-         callbacks are executed? *)
+      (* CHECKME: is it OK that set_state happens after the unload callbacks are
+         executed? *)
       let f () = update_state (); revisit full_uri state_id
       and cancel () = () in
       run_onunload_wrapper f cancel
@@ -2357,9 +2327,8 @@ let () =
     )
   )
   else (* Without history API *)
-    (* FIXME: This should be adapted to work with template...
-       Solution: add the "state_id" in the fragment ??
-    *)
+    (* FIXME: This should be adapted to work with template... Solution: add the
+       "state_id" in the fragment ?? *)
     let read_fragment () = Js.to_string Dom_html.window##.location##.hash in
     let auto_change_page fragment =
       Lwt.ignore_result
@@ -2397,10 +2366,8 @@ let () =
   Eliom_unwrap.register_unwrapper
     (Eliom_unwrap.id_of_int Eliom_common_base.server_function_unwrap_id_int)
     (fun (service, _) ->
-    (* 2013-07-31 I make all RPC's absolute because otherwise
-          it does not work with mobile apps.
-          Is it a problem?
-          -- Vincent *)
+    (* 2013-07-31 I make all RPC's absolute because otherwise it does not work
+       with mobile apps. Is it a problem? -- Vincent *)
     call_ocaml_service ~absolute:true ~service ()
   )
 

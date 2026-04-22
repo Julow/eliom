@@ -76,9 +76,9 @@ let is_marked o =
   in
   if
     Obj.tag o = 0 && Obj.size o >= 2
-    (* WARNING: we only allow block values with tag = 0 to be wrapped.
-     It is easier: we do not have to do another test to know if the
-     value is a function *)
+    (* WARNING: we only allow block values with tag = 0 to be wrapped. It is
+       easier: we do not have to do another test to know if the value is a
+       function *)
   then
     let potential_mark = Obj.field o (Obj.size o - 1) in
     is_mark potential_mark
@@ -89,9 +89,9 @@ let wrap_locally o =
   match mark.f with Some f -> f o | None -> assert false
 
 let bits = 8
-(* We use a hash-table with open addressing (which minimize
-   allocations) and resizable arrays. The initial size of the hash
-   table is 2 ** bits; the initial size of arrays is half this *)
+(* We use a hash-table with open addressing (which minimize allocations) and
+   resizable arrays. The initial size of the hash table is 2 ** bits; the
+   initial size of arrays is half this *)
 
 let none = Obj.repr 0 (* Unallocated entry in an array or in a hash-table *)
 
@@ -114,10 +114,10 @@ end
 let resize_count = ref 0
 let rehash_count = ref 0
 
-(* Hash-table associating an integer to a block.
-   As the block may be moved (once) during a minor garbage collection,
-   we may allocate more than once index for a block. But thereafter a
-   look-up will always return the second index. *)
+(* Hash-table associating an integer to a block. As the block may be moved
+   (once) during a minor garbage collection, we may allocate more than once
+   index for a block. But thereafter a look-up will always return the second
+   index. *)
 module Tbl = struct
   type t =
     { mutable size : int
@@ -131,8 +131,7 @@ module Tbl = struct
       mutable idx : int array
     ; (* Corresponding indices *)
       mutable gc : int
-    ; (* Last minor GC cycle where the
-                                    table was accurate *)
+    ; (* Last minor GC cycle where the table was accurate *)
       on_resize : (int -> unit) list
     }
   (* Functions called on resize *)
@@ -199,8 +198,8 @@ module Tbl = struct
     )
     else allocate_rec tbl x ((i + 1) land (tbl.size - 1))
 
-  (* Insert a block into the hash-table. This may return a new index
-     if the block was moved. *)
+  (* Insert a block into the hash-table. This may return a new index if the
+     block was moved. *)
   let allocate_index tbl x = allocate_rec tbl x (hash tbl x)
 
   let rec get_rec tbl x i =
@@ -214,12 +213,11 @@ module Tbl = struct
   (* This may fail if a GC occurred *)
   let get_index_no_retry tbl x = get_rec tbl x (hash tbl x)
 
-  (* Get the index associated to a block already in the hash-table.
-     If allocate_index is not invoked in-between, this always returns
-     the same index for a given block. Indeed, a look-up always return
-     the largest index of a block; this property is preserved both
-     when invoking allocate_index (though this may allocate a larger
-     index) and by rehashing. *)
+  (* Get the index associated to a block already in the hash-table. If
+     allocate_index is not invoked in-between, this always returns the same
+     index for a given block. Indeed, a look-up always return the largest index
+     of a block; this property is preserved both when invoking allocate_index
+     (though this may allocate a larger index) and by rehashing. *)
   let get_index tbl x =
     let idx = get_index_no_retry tbl x in
     if idx <> -1
@@ -238,9 +236,9 @@ module Tbl = struct
       idx
     )
 
-  (* We can check whether the table is up to date, but this has a very
-     slight chance to perform an allocation; in which case, the table
-     will no longer be up to date... *)
+  (* We can check whether the table is up to date, but this has a very slight
+     chance to perform an allocation; in which case, the table will no longer be
+     up to date... *)
   let was_up_to_date tbl = tbl.gc = gc_count ()
 end
 
@@ -294,9 +292,8 @@ let rec find_substs tbl subst_tbl v =
       (* Opaque values don't need to be copied *)
       unchanged
   | `Forward ->
-      (* Follow the forward pointers that may disappear due to GC
-       (our code might get confused if we stored them in the
-       hash-table) *)
+      (* Follow the forward pointers that may disappear due to GC (our code
+         might get confused if we stored them in the hash-table) *)
       find_substs tbl subst_tbl (Obj.field v 0)
   | `Scannable ->
       let idx = Tbl.allocate_index tbl v in
@@ -307,9 +304,9 @@ let rec find_substs tbl subst_tbl v =
         then
           if not (Tbl.was_up_to_date tbl)
           then (
-            (* v may have been visited already, so we rehash and try
-             again. Indeed, we don't want to call the wrapping
-             function twice on the same value. *)
+            (* v may have been visited already, so we rehash and try again.
+               Indeed, we don't want to call the wrapping function twice on the
+               same value. *)
             Tbl.rehash tbl;
             find_substs tbl subst_tbl v
           )
@@ -321,8 +318,8 @@ let rec find_substs tbl subst_tbl v =
             modified
           )
         else (
-          (* We don't know yet whether v needs to be copied.
-           We conservatively assume so for now. *)
+          (* We don't know yet whether v needs to be copied. We conservatively
+             assume so for now. *)
           DynArray.set subst_tbl idx modified;
           let size = Obj.size v in
           let is_unchanged = ref true in
@@ -381,8 +378,8 @@ let perform_wrap =
   wrap_count := 0;
   resize_count := 0;
   rehash_count := 0;
-  (* TODO: maybe we should use globally allocated tables by default,
-     with temporary allocations only for really large values? *)
+  (* TODO: maybe we should use globally allocated tables by default, with
+     temporary allocations only for really large values? *)
   let subst_tbl = DynArray.make () in
   let copy_tbl = DynArray.make () in
   let tbl = Tbl.make [subst_tbl; copy_tbl] in

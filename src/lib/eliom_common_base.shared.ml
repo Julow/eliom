@@ -139,8 +139,8 @@ let na_key_serv_of_req = function
 
 (*****************************************************************************)
 let defaultpagename = "./"
-(* should be "" but this does not work with firefox.
-   "index" works but one page may have two different URLs *)
+(* should be "" but this does not work with firefox. "index" works but one page
+   may have two different URLs *)
 
 let eliom_suffix_name = "__eliom_suffix"
 let eliom_suffix_internal_name = "__(suffix service)__"
@@ -231,8 +231,7 @@ type sess_info =
   ; si_ignored_get_params : (string * string) list
   ; si_ignored_post_params : (string * string) list
   ; si_client_process_info : client_process_info option
-  ; si_expect_process_data : bool Lazy.t
-        (*204FORMS*     si_internal_form: bool; *)
+  ; si_expect_process_data : bool Lazy.t (*204FORMS* si_internal_form: bool; *)
   }
 
 type eliom_js_page_data =
@@ -265,8 +264,8 @@ type node_ref = string
 
 (****** *)
 
-(* CCC take care: this must remain of the same syntax as non localised
-   non persistent get parameter name *)
+(* CCC take care: this must remain of the same syntax as non localised non
+   persistent get parameter name *)
 let nl_get_appl_parameter = "__nl_n_eliom-process.p"
 
 (* make a path by going up when there is a '..' *)
@@ -363,9 +362,9 @@ type anon_params_type = int
 exception Eliom_Typing_Error of (string * exn) list
 
 type ('params, 'result) service =
-  { (* unique_id, computed from parameters type.  must be the same even
-     if the actual service reference is different (after reloading the
-     site) so that it replaces the former one *)
+  { (* unique_id, computed from parameters type. must be the same even if the
+       actual service reference is different (after reloading the site) so that
+       it replaces the former one *)
     s_id : anon_params_type * anon_params_type
   ; mutable s_max_use : int option
   ; s_expire : (float * float ref) option
@@ -374,8 +373,8 @@ type ('params, 'result) service =
 
 type 'a to_and_of = {of_string : string -> 'a; to_string : 'a -> string}
 
-(* gets backtrace up until the first slot in the backtrace which mentions
-     Lwt, which is usually where the backtrace is no longer informative *)
+(* gets backtrace up until the first slot in the backtrace which mentions Lwt,
+   which is usually where the backtrace is no longer informative *)
 let backtrace_lwt =
   let lwt_slot_re = Re.Str.regexp "Called from Lwt." in
   fun skip ->

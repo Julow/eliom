@@ -27,10 +27,9 @@ type compilation_unit_global_data2 =
   }
 
 let get_global_data, modify_global_data =
-  (* We have to classify global data from ocsigen extensions (no site
-     available) and eliommodules (site data available).
-     Furthermore, the Eliom services must only send global data from
-     ocsigen extensions and their own site.  *)
+  (* We have to classify global data from ocsigen extensions (no site available)
+     and eliommodules (site data available). Furthermore, the Eliom services
+     must only send global data from ocsigen extensions and their own site. *)
   let global_data = ref Eliom_lib.String_map.empty in
   let site_data =
     Eliom_reference.Volatile.eref ~scope:Eliom_common.site_scope

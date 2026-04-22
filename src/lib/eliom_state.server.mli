@@ -53,8 +53,8 @@ val discard :
     when discarding a state.}
 *)
 
-(* Discard services and (volatile and persistent) data
-   for all user and request scopes *)
+(* Discard services and (volatile and persistent) data for all user and request
+   scopes *)
 val discard_all_scopes : ?secure:bool -> unit -> unit Lwt.t
 
 val discard_data :
@@ -998,67 +998,52 @@ val remove_persistent_data : table:'a persistent_table -> unit -> unit Lwt.t
 
 (**/**)
 
-(*
-   (** {3 Default timeouts} *)
+(* (** {3 Default timeouts} *)
 
-(** returns the default timeout for service sessions (server side).
-    The default timeout is common for all sessions for which no other value
-    has been set. At the beginning of the server, it is taken from the
-    configuration file, (or set to default value).
-    [None] = no timeout.
-    *)
-val get_default_service_session_timeout : unit -> float option
+   (** returns the default timeout for service sessions (server side). The
+   default timeout is common for all sessions for which no other value has been
+   set. At the beginning of the server, it is taken from the configuration file,
+   (or set to default value). [None] = no timeout. *) val
+   get_default_service_session_timeout : unit -> float option
 
-(** returns the default timeout for "volatile data" sessions (server side).
-    The default timeout is common for all sessions for which no other value
-    has been set. At the beginning of the server, it is taken from the
-    configuration file, (or set to default value).
-    [None] = no timeout.
-    *)
-val get_default_volatile_data_session_timeout : unit -> float option
+   (** returns the default timeout for "volatile data" sessions (server side).
+   The default timeout is common for all sessions for which no other value has
+   been set. At the beginning of the server, it is taken from the configuration
+   file, (or set to default value). [None] = no timeout. *) val
+   get_default_volatile_data_session_timeout : unit -> float option
 
-(** returns the default timeout for sessions (server side).
-    The default timeout is common for all sessions for which no other value
-    has been set. At the beginning of the server, it is taken from the
-    configuration file, (or set to default value).
-    [None] = no timeout.
-    *)
-val get_default_persistent_data_session_timeout : unit -> float option
+   (** returns the default timeout for sessions (server side). The default
+   timeout is common for all sessions for which no other value has been set. At
+   the beginning of the server, it is taken from the configuration file, (or set
+   to default value). [None] = no timeout. *) val
+   get_default_persistent_data_session_timeout : unit -> float option
 
-(** sets the default timeout for volatile (= "in memory")
-   sessions (i.e. both service session and volatile data session)
-   (server side).
+   (** sets the default timeout for volatile (= "in memory") sessions (i.e. both
+   service session and volatile data session) (server side). [None] = no
+   timeout.
+
+   Warning: this function sets the default for all sites. You should probably
+   use [set_global_volatile_session_timeout] instead. *) val
+   set_default_volatile_session_timeout : float option -> unit
+
+   (** sets the default timeout for service sessions. [None] = no timeout.
+
+   Warning: this function sets the default for all sites. You should probably
+   use [set_global_service_session_timeout] instead. *) val
+   set_default_service_session_timeout : float option -> unit
+
+   (** sets the default timeout for "volatile data" sessions (server side).
    [None] = no timeout.
 
-   Warning: this function sets the default for all sites. You should
-   probably use [set_global_volatile_session_timeout] instead.
-    *)
-val set_default_volatile_session_timeout : float option -> unit
+   Warning: this function sets the default for all sites. You should probably
+   use [set_global_volatile_data_session_timeout] instead. *) val
+   set_default_volatile_data_session_timeout : float option -> unit
 
-(** sets the default timeout for service sessions.
-    [None] = no timeout.
+   (** sets the default timeout for sessions (server side). [None] = no timeout.
 
-    Warning: this function sets the default for all sites. You should
-    probably use [set_global_service_session_timeout] instead.
-    *)
-val set_default_service_session_timeout : float option -> unit
-
-(** sets the default timeout for "volatile data" sessions (server side).
-    [None] = no timeout.
-
-    Warning: this function sets the default for all sites. You should
-    probably use [set_global_volatile_data_session_timeout] instead.
-    *)
-val set_default_volatile_data_session_timeout : float option -> unit
-
-(** sets the default timeout for sessions (server side).
-    [None] = no timeout.
-
-    Warning: this function sets the default for all sites. You should
-    probably use [set_global_persistent_data_session_timeout] instead.
-    *)
-val set_default_persistent_data_session_timeout : float option -> unit
-*)
+   Warning: this function sets the default for all sites. You should probably
+   use [set_global_persistent_data_session_timeout] instead. *) val
+   set_default_persistent_data_session_timeout : float option -> unit *)
 
 (*****************************************************************************)
 

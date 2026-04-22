@@ -194,18 +194,16 @@ let inferred_type_prefix = "eliom_inferred_type_"
 
 (* FIXME!
 
-   run_sed is a temporary hack to parse weakly monomorphic types of
-   the following forms:
+   run_sed is a temporary hack to parse weakly monomorphic types of the
+   following forms:
 
-   '_a
-   _[< ... ]
-   _[> ... ]
+   '_a _[< ... ] _[> ... ]
 
-   It also removes type indices foo/2 (in case of ambiguity in
-   module interfaces).
+   It also removes type indices foo/2 (in case of ambiguity in module
+   interfaces).
 
-   These appear in type_mli files, but they are not accepted by
-   the OCaml parser.  *)
+   These appear in type_mli files, but they are not accepted by the OCaml
+   parser. *)
 let run_sed file =
   run_command ("sed -i -e 's$/[1-9][0-9]*$$g' " ^ file);
   run_command ("sed -i -e 's/_\\[\\([<>]\\)/[\\1/g' " ^ file);
@@ -213,10 +211,10 @@ let run_sed file =
     (Printf.sprintf "sed -i -e \"s/'\\(_[a-z0-9_]*\\)/'%s\\1/g\" %s"
        inferred_type_prefix file
     );
-  (* For some sed implementations, [-e] is interpreted as an argument
-     to [-i], resulting in copy of the original file named [file ^
-     "-e"]. If we find such a file, remove it. Slightly less messy
-     than doing OS detection beforehand. *)
+  (* For some sed implementations, [-e] is interpreted as an argument to [-i],
+     resulting in copy of the original file named [file ^ "-e"]. If we find such
+     a file, remove it. Slightly less messy than doing OS detection
+     beforehand. *)
   let file_e = file ^ "-e" in
   if Sys.file_exists file_e then Sys.remove file_e
 

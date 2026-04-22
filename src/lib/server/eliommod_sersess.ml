@@ -53,13 +53,12 @@ let close_service_state ~scope ~secure_o ?sp () =
     in
     match !ior with
     | Eliom_common.SC c ->
-        (* there is only one way to close a session:
-             remove it from the session group table.
-             It will remove the entry in the session table *)
+        (* there is only one way to close a session: remove it from the session
+           group table. It will remove the entry in the session table *)
         ( match scope with
         | `Session_group _ -> (
-          (* If we want to close all the group of browser sessions,
-                   the node is found in the group table: *)
+          (* If we want to close all the group of browser sessions, the node is
+             found in the group table: *)
           match
             Eliommod_sessiongroups.Serv.find_node_in_group_of_groups
               !(c.Eliom_common.sc_session_group)
@@ -89,16 +88,15 @@ let fullsessgrp ~cookie_level ~sp set_session_group =
 
 let rec find_or_create_service_cookie_ ?set_session_group
     ~(cookie_scope : Eliom_common.cookie_scope) ~secure_o ~sp () =
-  (* If the cookie does not exist, create it.
-     Returns the cookie info for the cookie *)
+  (* If the cookie does not exist, create it. Returns the cookie info for the
+     cookie *)
   let cookie_level = Eliom_common.cookie_level_of_user_scope cookie_scope in
   let new_service_cookie sitedata full_state_name table =
     let set_session_group =
       match cookie_scope with
       | `Client_process n ->
-          (* We create a group whose name is the
-                   browser session cookie
-                   and put the tab session into it. *)
+          (* We create a group whose name is the browser session cookie and put
+             the tab session into it. *)
           let v =
             find_or_create_service_cookie_ ~cookie_scope:(`Session n) ~secure_o
               ~sp ()
@@ -161,8 +159,7 @@ let rec find_or_create_service_cookie_ ?set_session_group
     in
     match !ior with
     | Eliom_common.SCData_session_expired
-      (* We do not trust the value sent by the client,
-           for security reasons *)
+      (* We do not trust the value sent by the client, for security reasons *)
     | Eliom_common.SCNo_data ->
         let v =
           new_service_cookie sitedata full_st_name
@@ -217,8 +214,8 @@ let find_or_create_service_cookie ?set_session_group ~cookie_scope ~secure_o ?sp
     ()
 
 let find_service_cookie_only ~cookie_scope ~secure_o ?sp () =
-  (* If the cookie does not exist, do not create it, raise Not_found.
-     Returns the cookie info for the cookie *)
+  (* If the cookie does not exist, do not create it, raise Not_found. Returns
+     the cookie info for the cookie *)
   let sp = Eliom_common.sp_of_option sp in
   let (cookie_info, _, _), secure_ci =
     Eliom_common.get_cookie_info sp

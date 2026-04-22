@@ -67,17 +67,16 @@ let gc_timeouted_services now tables =
             (* we wait for the previous one to be completed *)
             ( match nodeopt, l with
             | Some node, {Eliom_common.s_expire = Some (_, e); _} :: _
-            (* it is an anonymous coservice.  The list should
-                       have length 1 here *)
+            (* it is an anonymous coservice. The list should have length 1
+               here *)
               when !e < now ->
                 Ocsigen_cache.Dlist.remove node
             | Some node, [] (* should not occur *) ->
                 Ocsigen_cache.Dlist.remove node
             | _ -> (
-              (* We find the data associated to ptk once again,
-                         because it may have changed, then we update it
-                         (without cooperation)
-                         (it's ok because the list is probably not large) *)
+              (* We find the data associated to ptk once again, because it may
+                 have changed, then we update it (without cooperation) (it's ok
+                 because the list is probably not large) *)
               try
                 let `Ptc (nodeopt, l), ll =
                   ( Eliom_common.Serv_Table.find ptk !ptr
@@ -235,12 +234,10 @@ let service_session_gc sitedata =
                          = 0
                          (* no tab sessions *)
                          && Eliom_common.service_tables_are_empty tables ->
-                      (* The session is not used in any table
-                   and is not in a group
-                   (scope must be `Session,
-                   as all tab sessions are in a group),
-                   and is not associated to any tab session.
-                   We can remove it. *)
+                      (* The session is not used in any table and is not in a
+                         group (scope must be `Session, as all tab sessions are
+                         in a group), and is not associated to any tab session.
+                         We can remove it. *)
                       Eliommod_sessiongroups.Serv.remove session_group_node
                   | _ -> () (*VVV enough? *)
                   );
@@ -291,12 +288,10 @@ let data_session_gc sitedata =
                        = 0
                        (* no tab sessions *)
                        && not_bound_in_data_tables k ->
-                    (* The session is not used in any table
-                          and is not in a group
-                          (scope must be `Session,
-                          as all tab sessions are in a group),
-                          and is not associated to any tab session.
-                          We can remove it. *)
+                    (* The session is not used in any table and is not in a
+                       group (scope must be `Session, as all tab sessions are in
+                       a group), and is not associated to any tab session. We
+                       can remove it. *)
                     if scope <> `Session
                     then
                       Logs.err ~src:section (fun fmt ->
@@ -304,8 +299,8 @@ let data_session_gc sitedata =
                           "Eliom: Group associated to IP has scope different from `Session. Please report the problem."
                       );
                     Eliommod_sessiongroups.Data.remove session_group_node;
-                    (* See also the finalisers in Eliommod_sessiongroups
-                          and Eliommod.ml *)
+                    (* See also the finalisers in Eliommod_sessiongroups and
+                       Eliommod.ml *)
                     Lwt.return_unit
                 | _ -> Lwt.return_unit
               )

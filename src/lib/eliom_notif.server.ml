@@ -1,10 +1,8 @@
 open Lwt
 
-(* We use a hashtable associating resourceid to a weak set of
-   (userid option, notif_ev) corresponding to each tab that want to
-   get updates of this box.
-   We keep a strong reference on these data in process state.
-*)
+(* We use a hashtable associating resourceid to a weak set of (userid option,
+   notif_ev) corresponding to each tab that want to get updates of this box. We
+   keep a strong reference on these data in process state. *)
 
 module type S = sig
   type identity
@@ -122,8 +120,7 @@ module Make (A : ARG) :
       (A.identity * notification_react) option Eliom_reference.Volatile.eref =
     Eliom_reference.Volatile.eref ~scope:Eliom_common.default_process_scope None
 
-  (* notif_e consists in a server side react event,
-     its client side counterpart,
+  (* notif_e consists in a server side react event, its client side counterpart,
      and the server side function to trigger it. *)
   let notif_e : notification_react Eliom_reference.Volatile.eref =
     Eliom_reference.Volatile.eref_from_fun
@@ -131,8 +128,8 @@ module Make (A : ARG) :
       let e, send_e = React.E.create () in
       let client_ev =
         Eliom_react.Down.of_react
-        (*VVV If we add throttling, some events may be lost
-               even if buffer size is not 1 :O *)
+        (*VVV If we add throttling, some events may be lost even if buffer size
+          is not 1 :O *)
           ~size:100 (*VVV ? *)
           ~scope:Eliom_common.default_process_scope e
       in
@@ -140,11 +137,9 @@ module Make (A : ARG) :
     )
 
   let set_identity identity =
-    (* For each tab connected to the app,
-       we keep a pointer to (identity, notif_ev) option in process state,
-       because the table resourceid -> (identity, notif_ev) option
-       is weak.
-    *)
+    (* For each tab connected to the app, we keep a pointer to (identity,
+       notif_ev) option in process state, because the table resourceid ->
+       (identity, notif_ev) option is weak. *)
     let notif_e = Eliom_reference.Volatile.get notif_e in
     Eliom_reference.Volatile.set identity_r (Some (identity, notif_e))
 

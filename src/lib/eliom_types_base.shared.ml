@@ -31,27 +31,20 @@ type sitedata =
   ; site_dir_string : string
   }
 
-(*SGO* Server generated onclicks/onsubmits
-(* For client side program, we sometimes simulate links and forms
-   with client side functions.
-   Here are there identifiers: *)
-let a_closure_id = 0x0
-let a_closure_id_string = Printf.sprintf "0x%02X" a_closure_id
-let get_closure_id = 0x3
-let get_closure_id_string = Printf.sprintf "0x%02X" get_closure_id
-let post_closure_id = 0x4
-let post_closure_id_string = Printf.sprintf "0x%02X" post_closure_id
+(*SGO* Server generated onclicks/onsubmits (* For client side program, we
+  sometimes simulate links and forms with client side functions. Here are there
+  identifiers: *) let a_closure_id = 0x0 let a_closure_id_string =
+  Printf.sprintf "0x%02X" a_closure_id let get_closure_id = 0x3 let
+  get_closure_id_string = Printf.sprintf "0x%02X" get_closure_id let
+  post_closure_id = 0x4 let post_closure_id_string = Printf.sprintf "0x%02X"
+  post_closure_id
 
-
-let eliom_temporary_form_node_name = "eliom__temp_form_node_name"
-*)
+  let eliom_temporary_form_node_name = "eliom__temp_form_node_name" *)
 
 (*POSTtabcookies* forms with tab cookies in POST params:
 
-let add_tab_cookies_to_get_form_id = 0x1
-let add_tab_cookies_to_get_form_id_string =
-  Printf.sprintf "0x%02X" add_tab_cookies_to_get_form_id
-let add_tab_cookies_to_post_form_id = 0x2
-let add_tab_cookies_to_post_form_id_string =
-  Printf.sprintf "0x%02X" add_tab_cookies_to_post_form_id
-*)
+  let add_tab_cookies_to_get_form_id = 0x1 let
+  add_tab_cookies_to_get_form_id_string = Printf.sprintf "0x%02X"
+  add_tab_cookies_to_get_form_id let add_tab_cookies_to_post_form_id = 0x2 let
+  add_tab_cookies_to_post_form_id_string = Printf.sprintf "0x%02X"
+  add_tab_cookies_to_post_form_id *)

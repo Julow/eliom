@@ -50,7 +50,7 @@ let reconstruct_relative_url_path current_url u =
   in
   let rec makedotdot = function
     | [] -> []
-    (*    | [a] -> "" *)
+    (* | [a] -> "" *)
     | _ :: l -> ".." :: makedotdot l
   in
   let aremonter, aaller = drop current_url u in
@@ -105,10 +105,9 @@ let is_https https ssl service =
   || (https = None && ssl)
 
 let make_uri_components_ ?(* does not take into account getparams *) absolute
-    ?((* absolute is used to force absolute link.
-       The default is false for regular application.
-       But for client side apps (mobile apps), it is true, because
-       relative URLs are used for local assets. *)
+    ?((* absolute is used to force absolute link. The default is false for
+         regular application. But for client side apps (mobile apps), it is
+         true, because relative URLs are used for local assets. *)
       absolute_path = false)
     ?(* used to force absolute link without protocol/server/port *)
      https (type a)
@@ -186,8 +185,8 @@ let make_uri_components_ ?(* does not take into account getparams *) absolute
           Eliom_service.prefix attser
           ^ "/"
           ^
-          (* we add the "/" even if there is no prefix, because
-                    we should do absolute links in that case *)
+          (* we add the "/" even if there is no prefix, because we should do
+             absolute links in that case *)
           reconstruct_absolute_url_path (Eliom_service.full_path attser) suff
         else
           match absolute with
@@ -304,8 +303,7 @@ let make_uri_components ?absolute ?absolute_path ?https (type a)
     Eliom_parameter.construct_params_list Eliom_lib.String.Table.empty
       (Eliom_service.get_params_type service)
       getparams
-    (* if nl params were already present, they will be replaced
-         by new values *)
+    (* if nl params were already present, they will be replaced by new values *)
   in
   let uri =
     match suff with
@@ -349,8 +347,8 @@ let make_post_uri_components_
         let getname = Eliom_service.get_name attser in
         match getname with
         | Eliom_common.SAtt_csrf_safe csrf_info ->
-            (* special case for post-coservices on get csrf safe services:
-           we must register the get service first *)
+            (* special case for post-coservices on get csrf safe services: we
+               must register the get service first *)
             let sp = Eliom_common.get_sp () in
             let s =
               Eliom_common.SAtt_anon
@@ -469,19 +467,18 @@ let make_post_uri_components_
             then
               (* Workaround for GitHub issue #465.
 
-             Given an app under a certain path and a server function,
-             we would perform requests on
+                 Given an app under a certain path and a server function, we
+                 would perform requests on
 
-             http://${SERVER}/${LOCAL_PATH},
+                 http://${SERVER}/${LOCAL_PATH},
 
-             where ${LOCAL_PATH} refers to the file system on the
-             mobile device. This is both wrong (because it doesn't
-             take care of the application path) and a security issue.
+                 where ${LOCAL_PATH} refers to the file system on the mobile
+                 device. This is both wrong (because it doesn't take care of the
+                 application path) and a security issue.
 
-             To fix the issue, if the URL contains
-             [Eliom_common.client_html_file ()] (default:
-             "eliom.html"), we disregard it and use the site dir as
-             the path. *)
+                 To fix the issue, if the URL contains
+                 [Eliom_common.client_html_file ()] (default: "eliom.html"), we
+                 disregard it and use the site dir as the path. *)
               let sd = Eliom_request_info.get_site_dir () in
               proto_prefix ^ String.concat "/" sd ^ "/"
             else
@@ -532,24 +529,20 @@ let make_post_uri_components__ = make_post_uri_components
 
 (*VVV
 
-  WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-  We do not take into account the suffix for computing process cookies
-  of GET forms (because the suffix is taken from the form).
-  This corresponds to what the browser is doing with session cookies.
-  For links and POST forms, the url already contains the suffix.
-  It is taken into account for computing process cookies.
-  Again, it is what the browser is doing for session cookies.
+  WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING We do
+  not take into account the suffix for computing process cookies of GET forms
+  (because the suffix is taken from the form). This corresponds to what the
+  browser is doing with session cookies. For links and POST forms, the url
+  already contains the suffix. It is taken into account for computing process
+  cookies. Again, it is what the browser is doing for session cookies.
 
-  This is not completely satisfactory,
-  but should always do what we want,
-  but for very non-standard uses of cookies ...
-*)
+  This is not completely satisfactory, but should always do what we want, but
+  for very non-standard uses of cookies ... *)
 let make_cookies_info (https, service) =
   (* https is what the user asked while creating the link/form *)
   let get_path_ (type a)
-      ~(* simplified version of make_uri_components.
-                            Returns only the absolute path without
-                            protocol/server/port AND WITHOUT SUFFIX *)
+      ~(* simplified version of make_uri_components. Returns only the absolute
+          path without protocol/server/port AND WITHOUT SUFFIX *)
       (service : (_, _, _, a, _, _, _, _, _, _, _) Eliom_service.t) =
     match Eliom_service.info service with
     | Eliom_service.Attached attser ->

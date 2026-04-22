@@ -168,13 +168,12 @@ end) : MEMTAB with type group_of_group_data = A.group_of_group_data = struct
         (fun node ->
           (* Finaliser of sessions and client processes *)
           let name = Ocsigen_cache.Dlist.value node in
-          (* First we close all subsessions
-             (that is, all sessions in the group associated to the session) *)
+          (* First we close all subsessions (that is, all sessions in the group
+             associated to the session) *)
           ( match cookie_level with
-          (*            | `Session_group -> assert false
-              As there is no table of groups of groups
-              (only one group of groups for each site),
-              the finaliser for these groups is created in eliommod.ml *)
+          (* | `Session_group -> assert false As there is no table of groups of
+             groups (only one group of groups for each site), the finaliser for
+             these groups is created in eliommod.ml *)
           | `Session (* We are closing a browser session *) ->
               (* First we close all tab sessions in the session (subgrp): *)
               let subgrp =
@@ -186,8 +185,8 @@ end) : MEMTAB with type group_of_group_data = A.group_of_group_data = struct
           );
           (* Then we close all session tables: *)
           A.close_session sitedata name;
-          (* If the dlist is empty, we remove it from the group table
-             (and possibly close the group itself): *)
+          (* If the dlist is empty, we remove it from the group table (and
+             possibly close the group itself): *)
           remove_if_empty sitedata sess_grp cl
         )
         cl;
@@ -219,14 +218,13 @@ end) : MEMTAB with type group_of_group_data = A.group_of_group_data = struct
   let up node = Ocsigen_cache.Dlist.up node
 
   let move ?set_max sitedata node sess_grp =
-    (*    if set_max <> None || grp1 <> grp2 then begin *)
+    (* if set_max <> None || grp1 <> grp2 then begin *)
     let cl = get_cl ?set_max sitedata sess_grp in
     ignore (Ocsigen_cache.Dlist.move node cl);
     match Ocsigen_cache.Dlist.newest cl with
     | Some v -> v
     | None -> assert false
-  (*    end
-    else [] *)
+  (* end else [] *)
 
   let nb_of_groups () = GroupTable.length grouptable
 
@@ -248,20 +246,15 @@ module Data = Make (struct
 
   let table :
       (group_of_group_data option * string Ocsigen_cache.Dlist.t) GroupTable.t =
-    (* The table associates the dlist for a group
-         to a full session group name.
-         It work both for groups of tab sessions and
-         groups of browser sessions.
-         For groups of groups, we do not need that table,
-         as there is only one group of groups for each site
-         (the dlist is found in sitedata).
-         The dlist is automatically removed from the table
-         when it becomes empty, using the finaliser of nodes.
-         In the case of groups of browser sessions,
-         the session group is also associated to a node
-         which corresponds to the node of that group in the group
-         of groups (one group of groups for each site).
-      *)
+    (* The table associates the dlist for a group to a full session group name.
+       It work both for groups of tab sessions and groups of browser sessions.
+       For groups of groups, we do not need that table, as there is only one
+       group of groups for each site (the dlist is found in sitedata). The dlist
+       is automatically removed from the table when it becomes empty, using the
+       finaliser of nodes. In the case of groups of browser sessions, the
+       session group is also associated to a node which corresponds to the node
+       of that group in the group of groups (one group of groups for each
+       site). *)
     GroupTable.create 100
 
   let close_session sitedata sess_id =
@@ -418,10 +411,9 @@ module Pers = struct
 
   let grouptable : (nbmax * string list) Ocsipersist.table Lwt.t Lazy.t =
     lazy (Ocsipersist.open_table "__eliom_session_group_table")
-  (* It is lazy because if the module is linked statically,
-         the creation of the table must happen after initialisation
-         of ocsipersist (after reading the configuration file to know
-         the location of the table) *)
+  (* It is lazy because if the module is linked statically, the creation of the
+     table must happen after initialisation of ocsipersist (after reading the
+     configuration file to know the location of the table) *)
 
   let find g =
     match g with
@@ -501,17 +493,16 @@ module Pers = struct
           | Some sg -> (
             match Eliom_common.getperssessgrp sg with
             | _, _, Right _ ->
-                (* No group has been set. No group table.
-                 Data associated to default (automatic) groups
-                 is removed when closing associated sessions. *)
+                (* No group has been set. No group table. Data associated to
+                   default (automatic) groups is removed when closing associated
+                   sessions. *)
                 Lwt.return_unit
             | _, _, Left group_name -> (
                 Eliom_common.Persistent_tables.remove_key_from_all_tables
                   group_name
                 >>= fun () ->
-                (* If it is associated to a session,
-                 we remove the session from its group,
-                 and we remove cookie info: *)
+                (* If it is associated to a session, we remove the session from
+                   its group, and we remove cookie info: *)
                 match cookie_level with
                 | `Client_process grp ->
                     (* We are closing a browser session,
@@ -532,8 +523,8 @@ module Pers = struct
       )
       (function Not_found -> Lwt.return_unit | e -> Lwt.fail e)
 
-  (* close a persistent session (tab or browser)
-     and the associated group (if browser session) by cookie value *)
+  (* close a persistent session (tab or browser) and the associated group (if
+     browser session) by cookie value *)
   and close_persistent_session2 ~cookie_level sitedata fullsessgrp cookie =
     (*VVV Check this carefully!!!! *)
     (*VVV Optimize the number of marshal/unmarshal (getperssessgrp) *)
@@ -564,13 +555,11 @@ module Pers = struct
             !!grouptable >>= fun grouptable ->
             Ocsipersist.find grouptable sg >>= fun (max, cl) ->
             let newcl = List.remove_first_if_any sess_id cl in
-            (* Before 2018-10-18, we were closing the session group
-             when newcl was empty (no more session in the group).
-             But persistent session groups are usually used to store persistent
-             information about users. It makes no sense cleaning this
-             information when user closes all their sessions.
-             I remove this. -- Vincent
-             *)
+            (* Before 2018-10-18, we were closing the session group when newcl
+               was empty (no more session in the group). But persistent session
+               groups are usually used to store persistent information about
+               users. It makes no sense cleaning this information when user
+               closes all their sessions. I remove this. -- Vincent *)
             Ocsipersist.replace_if_exists grouptable sg (max, newcl)
           )
           (function Not_found -> Lwt.return_unit | e -> Lwt.fail e)

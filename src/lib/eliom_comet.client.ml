@@ -33,12 +33,9 @@ module Configuration = struct
   type configuration_data =
     { active_until_timeout : bool
     ; time_between_request_unfocused : (float * float * float) list option
-    ; (* (a, b) for a * t + b
-           (0, 0) means always active
-           None means: no request
-           The list is here if there are several configurations
-           (we take the min of all values, for a given t)
-      *)
+    ; (* (a, b) for a * t + b (0, 0) means always active None means: no request
+         The list is here if there are several configurations (we take the min
+         of all values, for a given t) *)
       time_after_unfocus : float
     ; time_between_request : float
     }
@@ -158,8 +155,7 @@ module Configuration = struct
             in
             v
         | _ -> 0.
-        (* Configuration changed.
-                     We do not sleep and we'll see later. (?) *)
+        (* Configuration changed. We do not sleep and we'll see later. (?) *)
       else (get ()).time_between_request
     in
     let rec aux t =
@@ -764,9 +760,9 @@ let check_and_update_position position msg_pos data =
         else false
   )
 
-(* stateless channels are registered with a position: when a channel
-   is registered more than one time, it is possible to receive old
-   messages: the position is used to filter them out. *)
+(* stateless channels are registered with a position: when a channel is
+   registered more than one time, it is possible to receive old messages: the
+   position is used to filter them out. *)
 let register' hd position (_ : Ecb.comet_service) (chan_id : 'a Ecb.chan_id) =
   let chan_id = Ecb.string_of_chan_id chan_id in
   let stream =

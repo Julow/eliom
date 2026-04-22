@@ -243,8 +243,8 @@ type 'a redirection =
       -> 'a redirection
 
 module Redirection = struct
-  (* not really polymorphic; just adding a type variable to maintain
-     type-level compatibility with server (for injections) *)
+  (* not really polymorphic; just adding a type variable to maintain type-level
+     compatibility with server (for injections) *)
   type _ page = Eliom_service.non_ocaml redirection
 
   type options =

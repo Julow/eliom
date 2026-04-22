@@ -43,12 +43,10 @@ type 'a eref_kind =
 type volatile = [`Volatile]
 type persistent = [`Persistent]
 type ('a, 'storage) eref' = (unit -> 'a) * bool * 'a eref_kind
-(* * The function to get the value
-   * a boolean true means "it is safe to execute the function from an
-     external context" (for example if it is a constant function - eref created
-     from a value)
-   * the kind of reference (scope, persistence)
-*)
+(* * The function to get the value * a boolean true means "it is safe to execute
+   the function from an external context" (for example if it is a constant
+   function - eref created from a value) * the kind of reference (scope,
+   persistence) *)
 
 type 'a eref = ('a, [volatile | persistent]) eref'
 
@@ -57,7 +55,8 @@ exception Eref_not_initialized
 module Volatile = struct
   type 'a eref = ('a, volatile) eref'
 
-  (* TODO With GADTs, drop the [assert false] and [failwith] statements below! *)
+  (* TODO With GADTs, drop the [assert false] and [failwith] statements
+     below! *)
 
   let eref_from_fun_ ~ext ~scope ?secure f : 'a eref =
     ( f

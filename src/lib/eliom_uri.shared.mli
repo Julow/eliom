@@ -145,11 +145,10 @@ val reconstruct_relative_url_path : string list -> string list -> string list
 
 (**/**)
 
-(* make_string_uri_ and make_post_uri_components__ are alias to
-   make_string_uri and make_post_uri_components with a less
-   restrictive type. They should be removed once there is way to
-   downcast a "service_method" service to "get" or "post" service. See
-   Eliom_mkreg and Eliom_client. *)
+(* make_string_uri_ and make_post_uri_components__ are alias to make_string_uri
+   and make_post_uri_components with a less restrictive type. They should be
+   removed once there is way to downcast a "service_method" service to "get" or
+   "post" service. See Eliom_mkreg and Eliom_client. *)
 
 val make_string_uri_ :
      ?absolute:bool

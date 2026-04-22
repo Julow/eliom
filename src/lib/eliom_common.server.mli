@@ -132,8 +132,8 @@ val eliom_service_session_expired :
 
 (**/**)
 
-(*VVV Warning: raising these exceptions will NOT send cookies!
-  Do not use them inside services! *)
+(*VVV Warning: raising these exceptions will NOT send cookies! Do not use them
+  inside services! *)
 exception Eliom_do_redirection of string
 
 (* Used to redirect to the suffix version of the service *)
@@ -223,10 +223,8 @@ val nl_param_prefix : string
 val eliom_internal_nlp_prefix : string
 val pnl_param_prefix : string
 val npnl_param_prefix : string
-(*204FORMS* old implementation of forms with 204 and change_page_event
-val internal_form_name : string
-val internal_form_bool_name : string
-*)
+(*204FORMS* old implementation of forms with 204 and change_page_event val
+  internal_form_name : string val internal_form_bool_name : string *)
 
 val datacookiename : string
 val servicecookiename : string
@@ -277,7 +275,7 @@ type sess_info =
   ; si_ignored_get_params : (string * string) list
   ; si_ignored_post_params : (string * string) list
   ; si_client_process_info : client_process_info option
-  ; si_expect_process_data : bool Lazy.t (*204FORMS*  si_internal_form: bool; *)
+  ; si_expect_process_data : bool Lazy.t (*204FORMS* si_internal_form: bool; *)
   }
 
 module SessionCookies : Hashtbl.S with type key = string
@@ -285,11 +283,9 @@ module SessionCookies : Hashtbl.S with type key = string
 (* session groups *)
 type 'a sessgrp = string * cookie_level * (string, Ipaddr.t) leftright
 
-(* The full session group is the triple
-       (site_dir_string, scope, session group name).
-       The scope is the scope of group members (`Session by default).
-       If there is no session group,
-       we limit the number of sessions by IP address. *)
+(* The full session group is the triple (site_dir_string, scope, session group
+   name). The scope is the scope of group members (`Session by default). If
+   there is no session group, we limit the number of sessions by IP address. *)
 type perssessgrp (* the same triple, marshaled *)
 
 val make_persistent_full_group_name :
@@ -429,18 +425,17 @@ type server_params =
   ; (* cookies (un)set by the user during service *)
     mutable sp_user_tab_cookies : Ocsigen_cookie_map.t
   ; mutable sp_client_appl_name : string option
-  ; (* The application name,
-                                                 as sent by the browser *)
+  ; (* The application name, as sent by the browser *)
     sp_suffix : Url.path option
   ; sp_full_state_name : full_state_name option
   ; sp_client_process_info : client_process_info
-        (* Contains the base URL information from which the client process
-     has been launched (if any). All relative links and forms will be
-     created with respect to this information (if present - from
-     current URL otherwise). It is taken form a client process state
-     if the application has been launched before (and not timeouted on
-     server side).  Otherwise, it is created and registered in a
-     server side state the first time we need it.  *)
+        (* Contains the base URL information from which the client process has
+           been launched (if any). All relative links and forms will be created
+           with respect to this information (if present - from current URL
+           otherwise). It is taken form a client process state if the
+           application has been launched before (and not timeouted on server
+           side). Otherwise, it is created and registered in a server side state
+           the first time we need it. *)
   }
 
 and page_table = page_table_content Serv_Table.t
@@ -454,8 +449,8 @@ and page_table_content =
 
 and naservice_table_content =
   int
-  (* generation (= number of reloads of sites
-            after which that service has been created) *)
+  (* generation (= number of reloads of sites after which that service has been
+     created) *)
   * int ref option
   (* max_use *)
   * (float * float ref) option
@@ -482,44 +477,34 @@ and tables =
       (sp:server_params -> string) Int.Table.t
   ; mutable csrf_post_registration_functions :
       (sp:server_params -> att_key_serv -> string) Int.Table.t
-  ; (* These two table are used for CSRF safe services:
-         We associate to each service unique id the function that will
-         register a new anonymous coservice each time we create a link or form.
-         Attached POST coservices may have both a GET and POST
-         registration function. That's why there are two tables.
-         The functions associated to each service may be different for
-         each session. That's why we use these table, and not a field in
-         the service record.
-    *)
+  ; (* These two table are used for CSRF safe services: We associate to each
+       service unique id the function that will register a new anonymous
+       coservice each time we create a link or form. Attached POST coservices
+       may have both a GET and POST registration function. That's why there are
+       two tables. The functions associated to each service may be different for
+       each session. That's why we use these table, and not a field in the
+       service record. *)
     service_dlist_add :
          ?sp:server_params
       -> (page_table ref * page_table_key, na_key_serv) leftright
       -> (page_table ref * page_table_key, na_key_serv) leftright
          Ocsigen_cache.Dlist.node
-        (* Add in a dlist
-          for limiting the number of dynamic anonymous coservices in each table
-          (and avoid DoS).
-          There is one dlist for each session, and one for each IP
-          in global tables.
-          The dlist parameter is the table and coservice number
-          for attached coservices,
-          and the coservice number for non-attached ones.
-    *)
+        (* Add in a dlist for limiting the number of dynamic anonymous
+           coservices in each table (and avoid DoS). There is one dlist for each
+           session, and one for each IP in global tables. The dlist parameter is
+           the table and coservice number for attached coservices, and the
+           coservice number for non-attached ones. *)
   }
 
 and sitedata =
   { mutable site_dir : Url.path option
-        (* None when statically linked 
-                                           before module init*)
+        (* None when statically linked before module init*)
   ; mutable site_dir_string : string option (* idem *)
   ; mutable config_info : Ocsigen_extensions.config_info option (* idem *)
   ; default_links_xhr : bool tenable_value
-  ; (* Timeouts:
-       - default for site (browser sessions)
-       - default for site (tab sessions)
-       - then default for each full state name
-      The booleans means "has been set from config file"
-    *)
+  ; (* Timeouts: - default for site (browser sessions) - default for site (tab
+       sessions) - then default for each full state name The booleans means "has
+       been set from config file" *)
     mutable servtimeout :
       (float option * bool) option
       * (float option * bool) option
@@ -533,8 +518,7 @@ and sitedata =
       * (float option * bool) option
       * (full_state_name * (float option * bool)) list
   ; site_value_table : Polytables.t
-  ; (* table containing evaluated
-                                      lazy site values *)
+  ; (* table containing evaluated lazy site values *)
     mutable registered_scope_hierarchies : Hier_set.t
   ; global_services : tables
   ; session_services : tables Service_cookie.table

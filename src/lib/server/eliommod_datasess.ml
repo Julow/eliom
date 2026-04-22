@@ -55,14 +55,13 @@ let close_data_state ~scope ~secure_o ?sp () =
     in
     match !ior with
     | Eliom_common.SC c ->
-        (* There is only one way to close a session:
-           remove it from the session group table.
-           It will remove all the data table entries
-           and also the entry in the session table *)
+        (* There is only one way to close a session: remove it from the session
+           group table. It will remove all the data table entries and also the
+           entry in the session table *)
         ( match scope with
         | `Session_group _ -> (
-          (* If we want to close all the group of browser sessions,
-                   the node is found in the group table: *)
+          (* If we want to close all the group of browser sessions, the node is
+             found in the group table: *)
           match
             Eliommod_sessiongroups.Data.find_node_in_group_of_groups
               !(c.Eliom_common.dc_session_group)
@@ -74,8 +73,8 @@ let close_data_state ~scope ~secure_o ?sp () =
           | Some g -> Eliommod_sessiongroups.Data.remove g
         )
         | `Session _ | `Client_process _ ->
-            (* If we want to close a (tab/browser) session, the node is found
-                 in the cookie info: *)
+            (* If we want to close a (tab/browser) session, the node is found in
+               the cookie info: *)
             Eliommod_sessiongroups.Data.remove
               c.Eliom_common.dc_session_group_node
         );
@@ -93,17 +92,16 @@ let fullsessgrp ~cookie_level ~sp set_session_group =
 
 let rec find_or_create_data_cookie ?set_session_group
     ~(cookie_scope : Eliom_common.cookie_scope) ~secure_o ?sp () =
-  (* If the cookie does not exist, create it.
-     Returns the cookie info for the cookie *)
+  (* If the cookie does not exist, create it. Returns the cookie info for the
+     cookie *)
   let cookie_level = Eliom_common.cookie_level_of_user_scope cookie_scope in
   let sp = Eliom_common.sp_of_option sp in
   let new_data_cookie sitedata full_st_name table =
     let set_session_group =
       match cookie_scope with
       | `Client_process n ->
-          (* We create a group whose name is the
-                   browser session cookie
-                   and put the tab session into it. *)
+          (* We create a group whose name is the browser session cookie and put
+             the tab session into it. *)
           let v =
             find_or_create_data_cookie ~cookie_scope:(`Session n) ~secure_o ~sp
               ()
@@ -162,8 +160,7 @@ let rec find_or_create_data_cookie ?set_session_group
     in
     match !ior with
     | Eliom_common.SCData_session_expired
-      (* We do not trust the value sent by the client,
-           for security reasons *)
+      (* We do not trust the value sent by the client, for security reasons *)
     | Eliom_common.SCNo_data ->
         let v =
           new_data_cookie sitedata full_st_name
@@ -211,8 +208,8 @@ let find_or_create_data_cookie =
     )
 
 let find_data_cookie_only ~cookie_scope ~secure_o ?sp () =
-  (* If the cookie does not exist, do not create it, raise Not_found.
-     Returns the cookie info for the cookie *)
+  (* If the cookie does not exist, do not create it, raise Not_found. Returns
+     the cookie info for the cookie *)
   let sp = Eliom_common.sp_of_option sp in
   let cookie_level = Eliom_common.cookie_level_of_user_scope cookie_scope in
   let (_, cookie_info, _), secure_ci =

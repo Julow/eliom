@@ -116,9 +116,8 @@ module Pass = struct
     in
     push, flush
 
-  (* For every injection of $orig_expr$ as $gen_id$:
-     let $gen_id$ = $orig_expr$ and ...
-     (Necessary for injections in shared section) *)
+  (* For every injection of $orig_expr$ as $gen_id$: let $gen_id$ = $orig_expr$
+     and ... (Necessary for injections in shared section) *)
   let bind_injected_idents injections =
     assert (injections <> []);
     let bindings =

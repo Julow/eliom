@@ -3,8 +3,7 @@ module Pack = Ocamlbuild_pack
 
 (* Doc should move in its own ocamlbuild plugin *)
 
-(* Compile the wiki version of the Ocamldoc.
-   Thanks to Till Varoquaux on usenet:
+(* Compile the wiki version of the Ocamldoc. Thanks to Till Varoquaux on usenet:
    http://www.digipedia.pl/usenet/thread/14273/231/ *)
 
 let ocamldoc_wiki tags deps docout docdir =

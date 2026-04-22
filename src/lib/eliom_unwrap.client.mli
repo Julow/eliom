@@ -45,51 +45,47 @@ val unwrap : string -> int -> 'a
 
 (* == Internals
 
-   [Eliom_unwrap.unwrap] implements basically the unmarshalling of a
-   string to the JavaScript-representation an OCaml value, i.e.
-   JavaScript Arrays in lieu of [Obj.t].
+   [Eliom_unwrap.unwrap] implements basically the unmarshalling of a string to
+   the JavaScript-representation an OCaml value, i.e. JavaScript Arrays in lieu
+   of [Obj.t].
 
-   It is implemented in the JavaScript function
-   [caml_unwrap_value_from_string] in [eliom_client.js].
+   It is implemented in the JavaScript function [caml_unwrap_value_from_string]
+   in [eliom_client.js].
 
-   However, the unmarshalling for [unwrap] is provided with the
-   detection of unwrapping markers and application of the respective
-   unwrapping functions:
+   However, the unmarshalling for [unwrap] is provided with the detection of
+   unwrapping markers and application of the respective unwrapping functions:
 
-   Consider [s] to be a string with the marshalled representation of a
-   value [v]. Then [unwrap s 0] produces value similar to [v] but with
-   all values [w] in [v] whose JavaScript representation is
+   Consider [s] to be a string with the marshalled representation of a value
+   [v]. Then [unwrap s 0] produces value similar to [v] but with all values [w]
+   in [v] whose JavaScript representation is
 
-     [0, ..., [0, id, "unwrap_mark"]]
+   [0, ..., [0, id, "unwrap_mark"]]
 
-   replaced by [f w] if [f] was registered as [register_unwrapper
-   (id_of_int id) f]. Note, that the JavaScript's
+   replaced by [f w] if [f] was registered as [register_unwrapper (id_of_int id)
+   f]. Note, that the JavaScript's
 
-     [0, id, "unwrap_mark"]
+   [0, id, "unwrap_mark"]
 
    corresponds to OCaml's
 
-     (id, "unwrap_mark").
+   (id, "unwrap_mark").
 
    == Apropos late unwrapping
 
-   When no unwrapper is registered for a value with an unwrapping
-   marker with unwrap ID [id], that marker is replaced by a late
-   unwrapping marker
+   When no unwrapper is registered for a value with an unwrapping marker with
+   unwrap ID [id], that marker is replaced by a late unwrapping marker
 
-     (id, "late_unwrap_mark").
+   (id, "late_unwrap_mark").
 
-   Every occurrence of such a value in a field of another value
-   (i.e. sharing) is recorded during unwrapping.
+   Every occurrence of such a value in a field of another value (i.e. sharing)
+   is recorded during unwrapping.
 
-   These values can be later replaced using the function
-   [late_unwrap_value] below. This is used for the consecutive
-   unwrapping of client values.
+   These values can be later replaced using the function [late_unwrap_value]
+   below. This is used for the consecutive unwrapping of client values.
 
-   Note, that when starting the actual client program, i.e. after
-   running all top level declarations, no values marked for late
-   unwrapping should remain.
-*)
+   Note, that when starting the actual client program, i.e. after running all
+   top level declarations, no values marked for late unwrapping should
+   remain. *)
 
 val register_unwrapper' : unwrap_id -> ('a -> 'b option) -> unit
 

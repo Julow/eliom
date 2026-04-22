@@ -39,7 +39,8 @@ type ('a, 'b) t =
   ; error_h : 'b option Lwt.t * exn Lwt.u
   }
 
-(* clone streams such that each clone of the original stream raise the same exceptions *)
+(* clone streams such that each clone of the original stream raise the same
+   exceptions *)
 let consume (t, u) s =
   let t' =
     Lwt.catch
@@ -123,9 +124,9 @@ let create service channel waiter =
     ; error_h
     }
   in
-  (* the comet channel start receiving after the load phase, so the
-     original channel (i.e. without message lost) is only available in
-     the first loading phase. *)
+  (* the comet channel start receiving after the load phase, so the original
+     channel (i.e. without message lost) is only available in the first loading
+     phase. *)
   let _ =
     let* () = Eliom_client.wait_load_end () in
     t.original_stream_available <- false;

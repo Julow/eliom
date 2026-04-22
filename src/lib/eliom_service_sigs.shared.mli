@@ -450,8 +450,7 @@ module type S = sig
     -> Eliom_common.att_key_serv
     -> ('a, 'b, 'meth, att, 'co, 'ext, _, 'd, 'e, 'f, 'return) t
 
-  (* Not implemented on client side: TODO should not be called in
-     Eliom_uri *)
+  (* Not implemented on client side: TODO should not be called in Eliom_uri *)
   val register_delayed_get_or_na_coservice :
        sp:Eliom_common.server_params
     -> int * [< Eliom_common.user_scope] * bool option

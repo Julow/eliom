@@ -21,25 +21,23 @@
 (* This module generates the file used to infer types (hence wrappers) of server
    escaped values.
 
-   Server-specific and escaped expression will be kept only for
-   type-checking. In order to export type of escaped expressions: it
-   generates for each escaped expression a toplevel definition that
-   looks like:
+   Server-specific and escaped expression will be kept only for type-checking.
+   In order to export type of escaped expressions: it generates for each escaped
+   expression a toplevel definition that looks like:
 
-     let $global_id$ = ref None
+   let $global_id$ = ref None
 
-   And client-side expressions are replaced by lists of initializers
-   (one per escaped expressions):
+   And client-side expressions are replaced by lists of initializers (one per
+   escaped expressions):
 
-     $global_id$ := Some $expr$
-*)
+   $global_id$ := Some $expr$ *)
 open Ppxlib
 open Ast_helper
 open Ppx_eliom_utils
 
 module Pass = struct
-  (* accumulator, push and flush for typing expression
-     $gen_id := Some $orig_expr *)
+  (* accumulator, push and flush for typing expression $gen_id := Some
+     $orig_expr *)
   let push_typing_expr, flush_typing_expr =
     let typing_expr = ref [] in
     let add orig_expr id =
@@ -60,9 +58,7 @@ module Pass = struct
     in
     add, flush
 
-  (* accumulator, push and flush for typing str
-     let $id = ref None
-  *)
+  (* accumulator, push and flush for typing str let $id = ref None *)
   let push_typing_str_item, flush_typing_str_item =
     let typing_strs = ref [] in
     let add orig_expr id =

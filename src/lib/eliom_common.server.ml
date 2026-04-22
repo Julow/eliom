@@ -87,11 +87,10 @@ type cookie_exp =
   | CESome of float  (** expiration date *)
 
 (* 2013-03-01 From now on, cookie expire 10 years after opening the session.
-   Before, it was when the browser was closed but we think it has no sense,
-   and many people do not understand why their session is closed, even if
-   the session duration on server side is long.
-   If you want this, you now have to set this manually.
-*)
+   Before, it was when the browser was closed but we think it has no sense, and
+   many people do not understand why their session is closed, even if the
+   session duration on server side is long. If you want this, you now have to
+   set this manually. *)
 let default_client_cookie_exp () = CESome (Unix.time () +. 315532800.)
 
 type timeout =
@@ -99,7 +98,8 @@ type timeout =
   | TNone  (** explicitly set no timeout *)
   | TSome of float  (** timeout duration in seconds *)
 
-(* The table of tables for each session. Keys are hashes of cookies or group names *)
+(* The table of tables for each session. Keys are hashes of cookies or group
+   names *)
 module SessionCookies = Hashtbl.Make (struct
   type t = string
 
@@ -123,8 +123,8 @@ end = struct
     @@ Cryptokit.(hash_string (Hash.sha256 ()) c)
 
   let hash c =
-    (* To preserve compatibility, we only hash cookies that ends with an
-       'H'.  This is the case for all new cookies (see Eliommod_cookies). *)
+    (* To preserve compatibility, we only hash cookies that ends with an 'H'.
+       This is the case for all new cookies (see Eliommod_cookies). *)
     if c <> "" && c.[String.length c - 1] = 'H' then sha256 c else c
 
   let to_string x = x
@@ -133,11 +133,9 @@ end
 (* session groups *)
 type 'a sessgrp = string * cookie_level * (string, Ipaddr.t) leftright
 
-(* The full session group is the triple
-   (site_dir_string, scope, session group name).
-   The scope is the scope of group members (`Session by default).
-   If there is no session group,
-   we limit the number of sessions by IP address. *)
+(* The full session group is the triple (site_dir_string, scope, session group
+   name). The scope is the scope of group members (`Session by default). If
+   there is no session group, we limit the number of sessions by IP address. *)
 type perssessgrp = string (* same triple, marshaled *)
 
 let make_persistent_full_group_name ~cookie_level site_dir_string = function
@@ -153,20 +151,11 @@ type 'a one_service_cookie_info =
   { (* service sessions: *)
     sc_hvalue : Hashed_cookies.t (* hash of current value *)
   ; sc_set_value : string option (* new value to set *)
-  ; sc_table : 'a ref
-        (* service session table
-                                  ref towards cookie table
-    *)
-  ; sc_timeout : timeout ref
-        (* user timeout -
-                                  ref towards cookie table
-    *)
+  ; sc_table : 'a ref (* service session table ref towards cookie table *)
+  ; sc_timeout : timeout ref (* user timeout - ref towards cookie table *)
   ; sc_exp : float option ref
-        (* expiration date ref
-                                  (server side) -
-                                  None = never
-                                  ref towards cookie table
-    *)
+        (* expiration date ref (server side) - None = never ref towards cookie
+           table *)
   ; sc_cookie_exp : cookie_exp ref (* cookie expiration date to set *)
   ; sc_session_group : cookie_level sessgrp ref (* session group *)
   ; mutable sc_session_group_node : string Ocsigen_cache.Dlist.node
@@ -176,15 +165,10 @@ type one_data_cookie_info =
   { (* in memory data sessions: *)
     dc_hvalue : Hashed_cookies.t (* hash of current value *)
   ; dc_set_value : string option (* new value to set *)
-  ; dc_timeout : timeout ref
-        (* user timeout -
-                                         ref towards cookie table
-    *)
+  ; dc_timeout : timeout ref (* user timeout - ref towards cookie table *)
   ; dc_exp : float option ref
-        (* expiration date ref (server side) -
-                                         None = never
-                                         ref towards cookie table
-    *)
+        (* expiration date ref (server side) - None = never ref towards cookie
+           table *)
   ; dc_cookie_exp : cookie_exp ref (* cookie expiration date to set *)
   ; dc_session_group : cookie_level sessgrp ref (* session group *)
   ; mutable dc_session_group_node : string Ocsigen_cache.Dlist.node
@@ -223,14 +207,13 @@ type 'a cookie_info1 =
       (not sent by the browser) *)
   * one_data_cookie_info session_cookie ref
   )
-  (* SCNo_data = the session has been closed
-      SCData_session_expired = the cookie has not been found in the table.
-      For both of them, ask the browser to remove the cookie.
-    *)
+  (* SCNo_data = the session has been closed SCData_session_expired = the cookie
+     has not been found in the table. For both of them, ask the browser to
+     remove the cookie. *)
   Lazy.t
-  (* Lazy because we do not want to ask the browser to unset the cookie
-       if the cookie has not been used, otherwise it is impossible to
-       write a message "Your session has expired" *)
+  (* Lazy because we do not want to ask the browser to unset the cookie if the
+     cookie has not been used, otherwise it is impossible to write a message
+     "Your session has expired" *)
   Full_state_name_table.t
   ref
   (* The key is the full session name *)
@@ -238,21 +221,17 @@ type 'a cookie_info1 =
   ( ( string (* value sent by the browser *)
     * timeout (* timeout at the beginning of the request *)
     * float option
-    (* (server side) expdate
-                               at the beginning of the request
-                               None = no exp *)
+    (* (server side) expdate at the beginning of the request None = no exp *)
     * perssessgrp option
     )
     (* session group at beginning of request *)
     option
-  (* None = new cookie
-      (not sent by the browser) *)
+  (* None = new cookie (not sent by the browser) *)
   * one_persistent_cookie_info session_cookie ref
   )
-  (* SCNo_data = the session has been closed
-      SCData_session_expired = the cookie has not been found in the table.
-      For both of them, ask the browser to remove the cookie.
-    *)
+  (* SCNo_data = the session has been closed SCData_session_expired = the cookie
+     has not been found in the table. For both of them, ask the browser to
+     remove the cookie. *)
   Lwt.t
   Lazy.t
   Full_state_name_table.t
@@ -273,14 +252,11 @@ module Service_cookie = struct
     }
 
   type 'a table = 'a t SessionCookies.t
-  (* the table contains:
-     - the table of services
-     - the expiration date (by timeout), changed at each access to the table
-       (float option) None -> no expiration
-     - the timeout for the user (float option option) None -> see global config
-       Some None -> no timeout
-     - the group to which belongs the session
-  *)
+  (* the table contains: - the table of services - the expiration date (by
+     timeout), changed at each access to the table (float option) None -> no
+     expiration - the timeout for the user (float option option) None -> see
+     global config Some None -> no timeout - the group to which belongs the
+     session *)
 end
 
 module Data_cookie = struct
@@ -363,13 +339,11 @@ type server_params =
   ; (* cookies (un)set by the user during service *)
     mutable sp_user_tab_cookies : Ocsigen_cookie_map.t
   ; mutable sp_client_appl_name : string option
-  ; (* The application name,
-                                                  as sent by the browser *)
+  ; (* The application name, as sent by the browser *)
     sp_suffix : Url.path option (* suffix *)
   ; sp_full_state_name : full_state_name option
-        (* the name of the session
-     to which belong the service that answered
-     (if it is a session service) *)
+        (* the name of the session to which belong the service that answered (if
+           it is a session service) *)
   ; sp_client_process_info : client_process_info
   }
 
@@ -384,8 +358,8 @@ and page_table_content =
 
 and naservice_table_content =
   int
-  (* generation (= number of reloads of sites
-          after which that service has been created) *)
+  (* generation (= number of reloads of sites after which that service has been
+     created) *)
   * int ref option
   (* max_use *)
   * (float * float ref) option
@@ -414,41 +388,34 @@ and tables =
       (sp:server_params -> string) Int.Table.t
   ; mutable csrf_post_registration_functions :
       (sp:server_params -> att_key_serv -> string) Int.Table.t
-  ; (* These two table are used for CSRF safe services:
-         We associate to each service unique id the function that will
-         register a new anonymous coservice each time we create a link or form.
-         Attached POST coservices may have both a GET and POST
-         registration function. That's why there are two tables.
-         The functions associated to each service may be different for
-         each session. That's why we use these table, and not a field in
-         the service record.
-    *)
+  ; (* These two table are used for CSRF safe services: We associate to each
+       service unique id the function that will register a new anonymous
+       coservice each time we create a link or form. Attached POST coservices
+       may have both a GET and POST registration function. That's why there are
+       two tables. The functions associated to each service may be different for
+       each session. That's why we use these table, and not a field in the
+       service record. *)
     service_dlist_add :
          ?sp:server_params
       -> (page_table ref * page_table_key, na_key_serv) leftright
       -> (page_table ref * page_table_key, na_key_serv) leftright
          Ocsigen_cache.Dlist.node
-        (* We use a dlist for limiting the number of dynamic
-            anonymous coservices in each table (and avoid DoS).  There
-            is one dlist for each session, and one for each IP in
-            global tables.  The dlist parameter is the table and
-            coservice number for attached coservices, and the
-            coservice number for non-attached ones. *)
+        (* We use a dlist for limiting the number of dynamic anonymous
+           coservices in each table (and avoid DoS). There is one dlist for each
+           session, and one for each IP in global tables. The dlist parameter is
+           the table and coservice number for attached coservices, and the
+           coservice number for non-attached ones. *)
   }
 
 and sitedata =
   { mutable site_dir : Url.path option
-        (* None when statically linked 
-                                           before module init*)
+        (* None when statically linked before module init*)
   ; mutable site_dir_string : string option (* idem *)
   ; mutable config_info : Ocsigen_extensions.config_info option (* idem *)
   ; default_links_xhr : bool tenable_value
-  ; (* Timeouts:
-       - default for site (browser sessions)
-       - default for site (tab sessions)
-       - then default for each full session name
-      The booleans means "has been set from config file"
-    *)
+  ; (* Timeouts: - default for site (browser sessions) - default for site (tab
+       sessions) - then default for each full session name The booleans means
+       "has been set from config file" *)
     mutable servtimeout :
       (float option * bool) option
       * (float option * bool) option
@@ -462,21 +429,18 @@ and sitedata =
       * (float option * bool) option
       * (full_state_name * (float option * bool)) list
   ; site_value_table : Polytables.t
-  ; (* table containing evaluated
-                                       lazy site values *)
+  ; (* table containing evaluated lazy site values *)
     mutable registered_scope_hierarchies : Hier_set.t
-  ; (* All services, and state data are stored in these tables,
-      for scopes session and client process.
-      The scope is registered in the full session name. *)
+  ; (* All services, and state data are stored in these tables, for scopes
+       session and client process. The scope is registered in the full session
+       name. *)
     global_services : tables
   ; (* global service table *)
     session_services : tables Service_cookie.table
   ; (* cookie table for services (tab and browser sessions) *)
     session_data : Data_cookie.table
-  ; (* cookie table for in memory session data
-                                      (tab and browser sessions)
-                                      contains the information about the cookie
-                                      (expiration, group ...). *)
+  ; (* cookie table for in memory session data (tab and browser sessions)
+       contains the information about the cookie (expiration, group ...). *)
     group_of_groups : [`Session_group] sessgrp Ocsigen_cache.Dlist.t
   ; (* Limitation of the number of groups per site *)
     mutable remove_session_data : string -> unit
@@ -693,11 +657,10 @@ let absolute_change_sitedata, get_current_sitedata, end_current_sitedata =
     )
     (* get_current_sitedata *)
   , fun () -> popf2 () (* end_current_sitedata *) )
-(* Warning: these functions are used only during the initialisation
-   phase, which is not threaded ... That's why it works, but ...
-   it is not really clean ... public registration relies on this
-   directory (defined for each site in the config file)
-*)
+(* Warning: these functions are used only during the initialisation phase, which
+   is not threaded ... That's why it works, but ... it is not really clean ...
+   public registration relies on this directory (defined for each site in the
+   config file) *)
 
 (*****************************************************************************)
 let add_unregistered sitedata a =
@@ -782,8 +745,8 @@ let remove_naservice_table at k =
   match at with AVide -> AVide | ATable t -> ATable (NAserv_Table.remove k t)
 
 let dlist_finaliser na_table_ref node =
-  (* If the node disappears from the dlist,
-     we remove the service from the service table *)
+  (* If the node disappears from the dlist, we remove the service from the
+     service table *)
   match Ocsigen_cache.Dlist.value node with
   | Left (page_table_ref, page_table_key) ->
       page_table_ref := Serv_Table.remove page_table_key !page_table_ref
@@ -880,8 +843,7 @@ open Lwt
 
 (* The cookie name is
 
-sessionkind|S?|sitedirstring|"ref" ou "comet" ou ""|hiername
-*)
+   sessionkind|S?|sitedirstring|"ref" ou "comet" ou ""|hiername *)
 
 let full_state_name_of_cookie_name cookie_level cookiename =
   let _pref, cookiename = Ocsigen_lib.String.sep '|' cookiename in
@@ -920,8 +882,8 @@ let getcookies secure cookie_level cookienamepref cookies =
     )
     cookies Full_state_name_table.empty
 
-(* After an action, we do not take into account actual get params,
-   but these ones: *)
+(* After an action, we do not take into account actual get params, but these
+   ones: *)
 let eliom_params_after_action = Polytables.make_key ()
 
 (* After an action, we get tab_cookies info from rc: *)
@@ -980,11 +942,9 @@ let get_session_info ~sitedata ~req previous_extension_err =
     with Not_found ->
       let tab_cookies, post_params =
         try
-          (* Tab cookies are found in HTTP headers,
-   but also sometimes in POST params (when we do not want to do an XHR
-   because we want to stop the client side process).
-   It should never be both.
-          *)
+          (* Tab cookies are found in HTTP headers, but also sometimes in POST
+             params (when we do not want to do an XHR because we want to stop
+             the client side process). It should never be both. *)
           let tc, pp = List.assoc_remove tab_cookies_param_name post_params in
           let tc = [%of_json: (string * string) list] tc in
           ( List.fold_left
@@ -1038,13 +998,9 @@ let get_session_info ~sitedata ~req previous_extension_err =
   in
   (*204FORMS* old implementation of forms with 204 and change_page_event
 
-  let get_params, internal_form =
-    try
-      (snd (List.assoc_remove internal_form_full_name get_params),
-       true)
-    with Not_found -> (get_params, false)
-  in
-  *)
+    let get_params, internal_form = try (snd (List.assoc_remove
+    internal_form_full_name get_params), true) with Not_found -> (get_params,
+    false) in *)
   let get_params0 = get_params in
   let post_params0 = post_params in
   let* file_params0 = file_params in
@@ -1182,10 +1138,8 @@ let get_session_info ~sitedata ~req previous_extension_err =
             , (na_get_params, other_get_params)
             , lazy (na_name_num @ na_get_params)
             , [] )
-            (* Not possible to have POST parameters
-                     without naservice_num
-                     if there is a GET naservice_num
-            *)
+            (* Not possible to have POST parameters without naservice_num if
+               there is a GET naservice_num *)
         | _ ->
             let post_state, post_params =
               try
@@ -1253,19 +1207,18 @@ let get_session_info ~sitedata ~req previous_extension_err =
     sservice_cookies, sdata_cookies, spersistent_cookies
   in
   let ri, sess =
-    (*VVV 2011/02/15 TODO: I think we'd better not change ri here.
-  Keep ri for original values and use si for Eliom's values?
-    *)
+    (*VVV 2011/02/15 TODO: I think we'd better not change ri here. Keep ri for
+      original values and use si for Eliom's values? *)
     ( Ocsigen_request.update ri
         ?meth:
           ( if Ocsigen_request.meth ri = `HEAD || to_be_considered_as_get
             then Some `GET
             else
               None
-              (* Here we modify ri, instead of putting service parameters in
-         si.  Thus it works better after actions: the request can be
-         taken by other extensions, with new parameters.  Initial
-         parameters are kept in si.  *)
+              (* Here we modify ri, instead of putting service parameters in si.
+                 Thus it works better after actions: the request can be taken by
+                 other extensions, with new parameters. Initial parameters are
+                 kept in si. *)
           )
         ~get_params_flat:get_params
         ?post_data:
@@ -1300,7 +1253,7 @@ let get_session_info ~sitedata ~req previous_extension_err =
       ; si_ignored_post_params = ignored_post
       ; si_client_process_info = cpi
       ; si_expect_process_data =
-          epd (*204FORMS*     si_internal_form= internal_form; *)
+          epd (*204FORMS* si_internal_form= internal_form; *)
       } )
   in
   Lwt.return
@@ -1408,7 +1361,8 @@ module Persistent_tables = struct
 
   (** removes the entry from all opened tables *)
   let remove_key_from_all_tables key =
-    (* doesn't remove entry from Persistent_cookies_expiry_dates; not a problem *)
+    (* doesn't remove entry from Persistent_cookies_expiry_dates; not a
+       problem *)
     Lwt_list.iter_s
       (fun (module T : Ocsipersist.TABLE with type key = string) -> T.remove key)
       !functorial_tables
@@ -1465,8 +1419,8 @@ let comet_channel_unwrap_id : unwrap_id =
 
 let bus_unwrap_id : unwrap_id = Eliom_wrap.id_of_int bus_unwrap_id_int
 
-(* HACK: Remove the 'nl_get_appl_parameter' used to avoid confusion
-   between XHR and classical request in App. *)
+(* HACK: Remove the 'nl_get_appl_parameter' used to avoid confusion between XHR
+   and classical request in App. *)
 let patch_request_info ({Ocsigen_extensions.request_info; _} as r) =
   let u = Ocsigen_request.uri request_info in
   match Uri.get_query_param u nl_get_appl_parameter with

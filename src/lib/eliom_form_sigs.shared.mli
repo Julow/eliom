@@ -224,8 +224,8 @@ module type LINKS = sig
 end
 
 module type S = sig
-  (* When modifying this interface, please ensure that the ocamldoc is
-   coherent with the ocamldoc from Eliom_uri. *)
+  (* When modifying this interface, please ensure that the ocamldoc is coherent
+     with the ocamldoc from Eliom_uri. *)
 
   open Eliom_lib
   open Eliom_parameter

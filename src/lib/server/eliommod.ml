@@ -53,26 +53,22 @@ let default_omitpersistentstorage = ref None
 
 (* Subnet defaults be large enough, because it must work behind a reverse proxy.
 
-   If 1 session takes 1000 bytes (data + tables etc),
-   1 million sessions take 1 GB.
+   If 1 session takes 1000 bytes (data + tables etc), 1 million sessions take 1
+   GB.
 
-   If somebody opens 1000 sessions per second,
-   then it will take 1000 s (16 minutes) to reach 1000000.
+   If somebody opens 1000 sessions per second, then it will take 1000 s (16
+   minutes) to reach 1000000.
 
-   It means that regular users will have their sessions closed
-   after 16 minutes of inactivity if they share their sub network with
-   someone doing an attack (or if the server is behind a proxy).
+   It means that regular users will have their sessions closed after 16 minutes
+   of inactivity if they share their sub network with someone doing an attack
+   (or if the server is behind a proxy).
 
    In any case, it is better to use session groups when possible.
 
-   For persistent session, there is a limitation per session group,
-   efficient only for small values.
-   But there is no limitation by subnet.
-   1 billion sessions take 1 TB.
-   If somebody opens 1000 sessions per second,
-   then it will take 1 million s (16000 minutes = 266 h = 11 days)
-   to reach 1TB.
-*)
+   For persistent session, there is a limitation per session group, efficient
+   only for small values. But there is no limitation by subnet. 1 billion
+   sessions take 1 TB. If somebody opens 1000 sessions per second, then it will
+   take 1 million s (16000 minutes = 266 h = 11 days) to reach 1TB. *)
 
 let default_max_anonymous_services_per_subnet = ref 500000
 let default_max_anonymous_services_per_session = ref 1000
@@ -171,10 +167,8 @@ let create_sitedata_aux site_dir config_info =
           (* iterate on all session data tables: *)
           sitedata.Eliom_common.remove_session_data key
       | _ ->
-          (* No group has been set. No group table.
-                   Data associated to default (automatic) groups
-                   is removed when closing associated sessions.
-           *)
+          (* No group has been set. No group table. Data associated to default
+             (automatic) groups is removed when closing associated sessions. *)
           ()
     )
     group_of_groups;
@@ -185,8 +179,8 @@ let create_sitedata_aux site_dir config_info =
 
 (** We associate to each service a function server_params -> page *)
 let create_sitedata, update_sitedata =
-  (* We want to keep the old site data even if we reload the server.
-     To do that, we keep the site data in a table *)
+  (* We want to keep the old site data even if we reload the server. To do that,
+     we keep the site data in a table *)
   let t = S.create 5 in
   ( (fun host site_dir config_info ->
       let key = host, site_dir in
@@ -682,19 +676,18 @@ let exception_during_eliommodule_loading = ref false
 let end_init () =
   if !exception_during_eliommodule_loading
   then
-    (* An eliom module failed with an exception. We do not check
-            for the missing services, so that the exception can be correctly
-            propagated by Ocsigen_extensions *)
+    (* An eliom module failed with an exception. We do not check for the missing
+       services, so that the exception can be correctly propagated by
+       Ocsigen_extensions *)
     ()
   else
     try
       Eliom_common.verify_all_registered (Eliom_common.get_current_sitedata ());
       Eliom_common.end_current_sitedata ()
     with Eliom_common.Eliom_site_information_not_available _ -> ()
-(*VVV The "try with" looks like a hack:
-            end_init is called even for user config files ... but in that case,
-            current_sitedata is not set ...
-            It would be better to avoid calling end_init for user config files. *)
+(*VVV The "try with" looks like a hack: end_init is called even for user config
+  files ... but in that case, current_sitedata is not set ... It would be better
+  to avoid calling end_init for user config files. *)
 
 (** Function that will handle exceptions during the initialisation phase *)
 let handle_init_exn = function
@@ -862,8 +855,8 @@ let set_timeout
       (Eliom_common.get_site_dir_string sitedata)
       secure ~scope
   in
-  (*VVV We set timeout for both secure and unsecure states.
-Make possible to customize this? *)
+  (*VVV We set timeout for both secure and unsecure states. Make possible to
+    customize this? *)
   f
     ?full_st_name:(Option.map (make_full_st_name false) state_hier)
     ?cookie_level:(Some cookie_type) ~recompute_expdates:false true true
@@ -945,13 +938,11 @@ let parse_config _ hostpattern conf_info site_dir =
             sitedata
         else gen_nothing ()
     | Xml.Element ("eliom", atts, content) ->
-        (*--- if we put the line "new_sitedata" here, then there is
-  one service table for each <eliom> tag ...
-  I think the other one is the best,
-  because it corresponds to the way
-  browsers manage cookies (one cookie for one site).
-  Thus we can have one site in several cmo (with one session).
-        *)
+        (*--- if we put the line "new_sitedata" here, then there is one service
+          table for each <eliom> tag ... I think the other one is the best,
+          because it corresponds to the way browsers manage cookies (one cookie
+          for one site). Thus we can have one site in several cmo (with one
+          session). *)
         let oldipv6mask = sitedata.Eliom_common.ipv6mask in
         let content =
           parse_eliom_options
@@ -1007,10 +998,9 @@ let parse_config _ hostpattern conf_info site_dir =
             , (fun v ->
                 sitedata.Eliom_common.max_anonymous_services_per_subnet <-
                   v, true;
-                (* The global table has already been created, with old max
-                   and old ipv6mask.
-                   I update it, otherwise the setting has no effect
-                   for this table: *)
+                (* The global table has already been created, with old max and
+                   old ipv6mask. I update it, otherwise the setting has no
+                   effect for this table: *)
                 try
                   let dlist =
                     Eliom_common.find_dlist_ip_table
@@ -1063,17 +1053,17 @@ let parse_config _ hostpattern conf_info site_dir =
             exception_during_eliommodule_loading := false
         | _ -> ()
         );
-        (*VVV 2012/08
-        It is not possible to load an eliom extension using <eliom>. Why?
-        Is there a reason for this? For now I fail in that case. *)
+        (*VVV 2012/08 It is not possible to load an eliom extension using
+          <eliom>. Why? Is there a reason for this? For now I fail in that
+          case. *)
         if Eliom_extension.get_eliom_extension () != default_module_action
         then
           raise
             (Error_in_config_file
                "Eliom extensions cannot be loaded using <eliom>. Use <eliommodule> instead."
             );
-        (* We must generate the page only if it is the first <eliom> tag
-           for that site: *)
+        (* We must generate the page only if it is the first <eliom> tag for
+           that site: *)
         if !firsteliomtag
         then (
           firsteliomtag := false;

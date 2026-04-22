@@ -77,13 +77,11 @@ let update_cookie_table ?now sitedata (ci, sci) =
     (* Update "in memory data" expiration date and value *)
     Eliom_common.Full_state_name_table.iter
       (fun name v ->
-        (* 2018-07-17 We do this for all volatile sessions,
-           even if it has not been used,
-           otherwise, sessions could have different duration.
-           (Before: we were doing this only if (Lazy.is_val v))
-           Keeping same duration is important for example for comet
-           (which is using both service and volatile data sessions).
-         *)
+        (* 2018-07-17 We do this for all volatile sessions, even if it has not
+           been used, otherwise, sessions could have different duration.
+           (Before: we were doing this only if (Lazy.is_val v)) Keeping same
+           duration is important for example for comet (which is using both
+           service and volatile data sessions). *)
         let _oldvalue, newr = Lazy.force v in
         match !newr with
         | Eliom_common.SCData_session_expired | Eliom_common.SCNo_data ->
@@ -105,8 +103,8 @@ let update_cookie_table ?now sitedata (ci, sci) =
       )
       !data_cookies_info;
     let module Expiry_tolerance = struct
-      (* Avoid cookie updates that only change the cookie
-         expiry date by a negligible amount of time. *)
+      (* Avoid cookie updates that only change the cookie expiry date by a
+         negligible amount of time. *)
       let timeout_tolerance_factor = 0.01
 
       let within_tolerance x y =
@@ -189,10 +187,9 @@ let update_cookie_table ?now sitedata (ci, sci) =
                       ; session_group = !(newc.Eliom_common.pc_session_group)
                       }
               )
-            (*VVV Do not forget to change persistent_cookie_table_version
-          if you change the type of persistent table data,
-          otherwise the server will crash!!!
-             *)
+            (*VVV Do not forget to change persistent_cookie_table_version if you
+              change the type of persistent table data, otherwise the server
+              will crash!!! *)
           in
           thr >>= fun () -> thr2
         )
@@ -260,10 +257,8 @@ let gen_req_not_found ~is_eliom_extension ~sitedata ~previous_extension_err ~req
       si.Eliom_common.si_secure_cookie_info
   in
   let (tab_cookie_info, closedsessions_tab), user_tab_cookies =
-    (* If tab cookie info exists in rc (because an action put them here),
-       we get it from here.
-       Otherwise we get it from tab cookies in parameters.
-    *)
+    (* If tab cookie info exists in rc (because an action put them here), we get
+       it from here. Otherwise we get it from tab cookies in parameters. *)
     match previous_tab_cookies_info with
     | Some (atci, utc) -> (atci, []), utc
     | None ->
@@ -281,7 +276,8 @@ let gen_req_not_found ~is_eliom_extension ~sitedata ~previous_extension_err ~req
       ) =
     let sp = Eliom_common.make_server_params sitedata info None None in
     (* The last two arguments are not yet available, so for now we use None.
-       This value will later be overwritten once this information is available. *)
+       This value will later be overwritten once this information is
+       available. *)
     Lwt.with_value Eliom_common.sp_key (Some sp) @@ fun () ->
     let genfun =
       match si.Eliom_common.si_nonatt_info with
@@ -326,11 +322,9 @@ let gen_req_not_found ~is_eliom_extension ~sitedata ~previous_extension_err ~req
             ~table:
               (Ocsigen_request.request_cache ri.Ocsigen_extensions.request_info)
             ~key:Eliom_common.found_stop_key;
-          (* if we find this information in request cache,
-              the request has already been completed.
-              (used after an action).
-              Do not try the following extensions.
-           *)
+          (* if we find this information in request cache, the request has
+             already been completed. (used after an action). Do not try the
+             following extensions. *)
           Lwt.return
             (Ocsigen_extensions.Ext_found_stop (fun () -> Lwt.return res))
         with Not_found ->

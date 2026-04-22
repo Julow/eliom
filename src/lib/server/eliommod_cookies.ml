@@ -50,7 +50,8 @@ module Persistent_cookies = struct
 
   module Ocsipersist = Eliom_common.Ocsipersist.Functorial
 
-  (* NOTE: Do not forget to change the version number when the internal format changes! *)
+  (* NOTE: Do not forget to change the version number when the internal format
+     changes! *)
   let persistent_cookie_table_version = "_v5"
 
   (* v2 introduces session groups *)
@@ -161,8 +162,7 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
               ( Eliom_common.Full_state_name_table.add name
                   ( Some value (* value sent by the browser *)
                   , ref Eliom_common.SCData_session_expired
-                    (* ask the browser
-                                          to remove the cookie *)
+                    (* ask the browser to remove the cookie *)
                   )
                   oktable
               , name :: failedlist )
@@ -178,9 +178,8 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
                          ; Eliom_common.sc_exp = expiry
                          ; Eliom_common.sc_cookie_exp =
                              ref Eliom_common.CENothing
-                             (* cookie expiration date to send
-                                 to the browser.
-                                 We don't change it *)
+                             (* cookie expiration date to send to the browser.
+                                We don't change it *)
                          ; Eliom_common.sc_session_group = session_group
                          ; Eliom_common.sc_session_group_node =
                              session_group_node
@@ -193,8 +192,7 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
           ( Eliom_common.Full_state_name_table.add name
               ( Some value (* value sent by the browser *)
               , ref Eliom_common.SCData_session_expired
-                (* ask the browser
-                                             to remove the cookie *)
+                (* ask the browser to remove the cookie *)
               )
               oktable
           , name :: failedlist )
@@ -226,9 +224,7 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
                   Eliommod_sessiongroups.Data.remove session_group_node;
                   ( Some value (* value sent by the browser *)
                   , ref Eliom_common.SCData_session_expired
-                    (* ask the browser
-                                                 to remove the cookie *)
-                  )
+                    (* ask the browser to remove the cookie *) )
               | _ ->
                   ( Some value (* value sent by the browser *)
                   , ref
@@ -238,14 +234,11 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
                          ; Eliom_common.dc_timeout =
                              timeout (* user timeout ref *)
                          ; Eliom_common.dc_exp =
-                             expiry
-                             (* expiration date
-                                                        (server side) *)
+                             expiry (* expiration date (server side) *)
                          ; Eliom_common.dc_cookie_exp =
                              ref Eliom_common.CENothing
-                             (* cookie expiration date to send
-                                 to the browser.
-                                 We don't change it *)
+                             (* cookie expiration date to send to the browser.
+                                We don't change it *)
                          ; Eliom_common.dc_session_group = session_group
                          ; Eliom_common.dc_session_group_node =
                              session_group_node
@@ -254,8 +247,7 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
             with Not_found ->
               ( Some value (* value sent by the browser *)
               , ref Eliom_common.SCData_session_expired
-                (* ask the browser
-                   to remove the cookie *) )
+                (* ask the browser to remove the cookie *) )
           )
       )
       data_cookies
@@ -290,37 +282,28 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
                    >>= fun () ->
                    return
                      ( Some
-                         ( value
-                           (* value at the beginning
-                                                 of the request *)
+                         ( value (* value at the beginning of the request *)
                          , perstimeout
-                           (* user persistent timeout
-                                                 at the beginning
-                                                 of the request *)
+                           (* user persistent timeout at the beginning of the
+                              request *)
                          , persexp
-                           (* expiration date (server)
-                                                 at the beginning
-                                                 of the request *)
+                           (* expiration date (server) at the beginning of the
+                              request *)
                          , sessgrp (* session group at beginning *)
                          )
                      , ref Eliom_common.SCData_session_expired
-                       (* ask the browser to
-                                                 remove the cookie *)
+                       (* ask the browser to remove the cookie *)
                      )
                | _ ->
                    return
                      ( Some
-                         ( value
-                           (* value at the beginning
-                                              of the request *)
+                         ( value (* value at the beginning of the request *)
                          , perstimeout
-                           (* user persistent timeout
-                                              at the beginning
-                                              of the request *)
+                           (* user persistent timeout at the beginning of the
+                              request *)
                          , persexp
-                           (* expiration date (server)
-                                              at the beginning
-                                              of the request *)
+                           (* expiration date (server) at the beginning of the
+                              request *)
                          , sessgrp (* session group at beginning *)
                          )
                      , ref
@@ -332,9 +315,8 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
                                 (* user persistent timeout ref *)
                             ; Eliom_common.pc_cookie_exp =
                                 ref Eliom_common.CENothing
-                                (* persistent cookie expiration
-                                    date ref to send to the browser:
-                                    We don't change it *)
+                                (* persistent cookie expiration date ref to send
+                                   to the browser: We don't change it *)
                             ; Eliom_common.pc_session_group = ref sessgrp
                             }
                          )
@@ -344,22 +326,17 @@ let get_cookie_info now sitedata service_cookies data_cookies persistent_cookies
                | Not_found ->
                    return
                      ( Some
-                         ( value
-                           (* value at the beginning
-                                             of the request *)
+                         ( value (* value at the beginning of the request *)
                          , Eliom_common.TGlobal
-                           (* user persistent timeout
-                                             at the beginning
-                                             of the request *)
+                           (* user persistent timeout at the beginning of the
+                              request *)
                          , Some 0.
-                           (* expiration date (server)
-                                             at the beginning
-                                             of the request *)
+                           (* expiration date (server) at the beginning of the
+                              request *)
                          , None (* session group at beginning *)
                          )
                      , ref Eliom_common.SCData_session_expired
-                       (* ask the browser
-                                             to remove the cookie *)
+                       (* ask the browser to remove the cookie *)
                      )
                | e -> fail e
                )
@@ -476,9 +453,8 @@ let compute_session_cookies_to_send sitedata
                     ~path:(Eliom_common.get_site_dir sitedata)
                     (Eliom_common.make_full_cookie_name cookiekind full_st_name)
                     OUnset beg
-              (* the path is always site_dir because the cookie cannot
-                 have been unset by a service outside
-                 this site directory *)
+              (* the path is always site_dir because the cookie cannot have been
+                 unset by a service outside this site directory *)
               | _, Some (_, Some v, exp) ->
                   (* New value *)
                   Ocsigen_cookie_map.add
@@ -536,8 +512,9 @@ let compute_new_ri_cookies' now ripath ricookies cookies_set_by_page =
       then
         Ocsigen_cookie_map.Map_inner.fold
           (fun name v cookies ->
-            (*VVV We always keep secure cookies, event if the protocol is not secure,
-  because this function is for actions only. Is that right? *)
+            (*VVV We always keep secure cookies, event if the protocol is not
+              secure, because this function is for actions only. Is that
+              right? *)
             match v with
             | OSet (Some exp, value, _secure) when exp > now ->
                 Ocsigen_cookie_map.Map_inner.add name value cookies
@@ -638,5 +615,5 @@ let compute_new_ri_cookies (now : float) (ripath : string list)
     ric
   in
   f false ci ric >>= fun ric -> f true secure_ci ric
-(*VVV We always keep secure cookies, even if the protocol is not secure,
-  because this function is for actions only. Is that right? *)
+(*VVV We always keep secure cookies, even if the protocol is not secure, because
+  this function is for actions only. Is that right? *)

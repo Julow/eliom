@@ -234,8 +234,8 @@ module Action_base = struct
   (* The post action service will decide later *)
 
   let send_directly ri res =
-    (* send bypassing the following directives in the configuration
-       file (they have already been taken into account) *)
+    (* send bypassing the following directives in the configuration file (they
+       have already been taken into account) *)
     Polytables.set
       ~table:(Ocsigen_request.request_cache ri)
       ~key:Eliom_common.found_stop_key ~value:();
@@ -261,17 +261,16 @@ module Action_base = struct
         result_of_content ?charset ?content_type ~headers ~status
           Ocsigen_response.Body.empty
     | `Reload -> (
-        (* It is an action, we reload the page. To do that, we retry
-         without POST params.
+        (* It is an action, we reload the page. To do that, we retry without
+           POST params.
 
-         If no post param at all, we retry without GET non_att info.
+           If no post param at all, we retry without GET non_att info.
 
-         If no GET non_att info, we retry without GET state.
+           If no GET non_att info, we retry without GET state.
 
-         If no GET state, we do not reload, otherwise it will
-         loop.
+           If no GET state, we do not reload, otherwise it will loop.
 
-         Be very careful while re-reading this. *)
+           Be very careful while re-reading this. *)
         let sp = Eliom_common.get_sp () in
         let sitedata = Eliom_request_info.get_sitedata_sp ~sp in
         let si = Eliom_request_info.get_si sp in
@@ -300,11 +299,10 @@ module Action_base = struct
             in
             (* Now tab cookies:
 
-           As tab cookies are sent only by Eliom_app services,
-           we just need to keep them in rc.
+               As tab cookies are sent only by Eliom_app services, we just need
+               to keep them in rc.
 
-           If the fallback service is not Eliom_app, they will be
-           lost. *)
+               If the fallback service is not Eliom_app, they will be lost. *)
             let rc = Eliom_request_info.get_request_cache_sp sp in
             Polytables.set ~table:rc
               ~key:Eliom_common.tab_cookie_action_info_key
@@ -333,8 +331,8 @@ module Action_base = struct
                 , si.Eliom_common.si_ignored_get_params
                 , si.Eliom_common.si_ignored_post_params
                 );
-            (*VVV Also put all_cookie_info in this, to avoid
-          update_cookie_table and get_cookie_info (?) *)
+            (*VVV Also put all_cookie_info in this, to avoid update_cookie_table
+              and get_cookie_info (?) *)
             let ri = update_request ri.request_info si ric in
             let* () =
               Eliommod_pagegen.update_cookie_table sitedata all_cookie_info
@@ -369,8 +367,8 @@ end
 
 module Unit = Eliom_mkreg.Make (Unit_base)
 
-(* Any is a module allowing to register services that decide
-   themselves what they want to send.  *)
+(* Any is a module allowing to register services that decide themselves what
+   they want to send. *)
 module Any_base = struct
   type 'a page = 'a kind
   type options = unit
@@ -589,7 +587,7 @@ module Ocaml = struct
           data;
       data
     in
-    (*     debug_client_value_data (debug "%s") client_value_data; *)
+    (* debug_client_value_data (debug "%s") client_value_data; *)
     let r = {Eliom_runtime.ecs_request_data; ecs_data = data} in
     Lwt.return (Eliom_types.encode_eliom_data r)
 
@@ -873,7 +871,8 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
          ()
       )
 
-  (* Automatically return WASM detection script or JS-only script based on config *)
+  (* Automatically return WASM detection script or JS-only script based on
+     config *)
   let application_script ?defer ?async () =
     if (Eliom_request_info.get_sitedata ()).Eliom_common.enable_wasm
     then wasm_detection_script ?defer ?async ()
@@ -922,9 +921,9 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
           data;
       data
     in
-    (* wrapping of values could create eliom references that may
-       create cookies that needs to be sent along the page. Hence,
-       cookies should be calculated after wrapping. *)
+    (* wrapping of values could create eliom references that may create cookies
+       that needs to be sent along the page. Hence, cookies should be calculated
+       after wrapping. *)
     let eliom_data =
       Eliom_content.Xml.wrap
         (Eliom_content.Html.D.toelt page)
@@ -977,8 +976,8 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
   let add_eliom_global_data_script rem =
     if global_data_cache_options () <> None
     then
-      (* Using the async flag does not make sense here as we need to
-         be sure that this is executed before the application script. *)
+      (* Using the async flag does not make sense here as we need to be sure
+         that this is executed before the application script. *)
       let defer, _ =
         (Eliom_request_info.get_sitedata ()).Eliom_common.application_script
       in
@@ -1039,12 +1038,10 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
     in
     let head_elts =
       appl_data_script
-      (* <base> elt is added only for xhr done by client process,
-         because in that case, URLs are relative to the URL of
-         the first page, not the current URL.
-         We don't want to put base for non-xhr,
-         to make it possible to have truly relative URLs in HTML pages.
-      *)
+      (* <base> elt is added only for xhr done by client process, because in
+         that case, URLs are relative to the URL of the first page, not the
+         current URL. We don't want to put base for non-xhr, to make it possible
+         to have truly relative URLs in HTML pages. *)
       ::
       ( if Eliom_request_info.expecting_process_page ()
         then
@@ -1072,8 +1069,8 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
     in
     (* Then we replace the faked data_script *)
     let head_elts =
-      (* Eliom_client_core.load_data_script expects data_script to be
-         second in this list *)
+      (* Eliom_client_core.load_data_script expects data_script to be second in
+         this list *)
       List.hd head_elts :: data_script
       :: add_eliom_global_data_script (List.tl head_elts)
     in
@@ -1106,8 +1103,8 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
   let send ?(options = default_appl_service_options) ?charset ?code
       ?content_type ?headers content =
     let sp = Eliom_common.get_sp () in
-    (* GRGR FIXME et si le nom de l'application diffère ?? Il faut
-       renvoyer un full_redirect... TODO *)
+    (* GRGR FIXME et si le nom de l'application diffère ?? Il faut renvoyer un
+       full_redirect... TODO *)
     if sp.Eliom_common.sp_client_appl_name <> Some App_param.application_name
     then
       Eliom_state.set_cookie ~cookie_level:`Client_process
@@ -1128,8 +1125,8 @@ module App_base (App_param : Eliom_registration_sigs.APP_PARAM) = struct
           App_param.application_name
       in
       try
-        (* If it is a suffix service with redirection, we may have to
-           normalize the uri *)
+        (* If it is a suffix service with redirection, we may have to normalize
+           the uri *)
         let table = Eliom_request_info.get_request_cache () in
         Cohttp.Header.replace h Eliom_common_base.response_url_header
           (Polytables.get ~table ~key:Eliom_mkreg.suffix_redir_uri_key)
@@ -1227,17 +1224,16 @@ let status_of_redirection_options options code =
     | `TemporaryRedirect -> `Temporary_redirect
   )
 
-(* Redirection services are like services, but send a redirection
-   instead of a page.
+(* Redirection services are like services, but send a redirection instead of a
+   page.
 
-   The HTTP/1.1 RFC says: If the 301 status code is received in
-   response to a request other than GET or HEAD, the user agent MUST
-   NOT automatically redirect the request unless it can be confirmed
-   by the user, since this might change the conditions under which the
-   request was issued.
+   The HTTP/1.1 RFC says: If the 301 status code is received in response to a
+   request other than GET or HEAD, the user agent MUST NOT automatically
+   redirect the request unless it can be confirmed by the user, since this might
+   change the conditions under which the request was issued.
 
-   Here redirections are done towards services without parameters.
-   (possibly preapplied). *)
+   Here redirections are done towards services without parameters. (possibly
+   preapplied). *)
 module String_redirection_base = struct
   type page = Eliom_lib.Url.uri
   type options = redirection_options
@@ -1250,14 +1246,13 @@ module String_redirection_base = struct
   let send ?(options = `Found) ?charset ?code ?content_type ?headers uri =
     let headers = Ocsigen_header.of_option headers
     and header_id, status =
-      (* We decide the kind of redirection we do. If the request is an
-         XHR done by a client side Eliom program expecting a process
-         page, we do not send an HTTP redirection. In that case, we
-         send a half XHR redirection.  *)
+      (* We decide the kind of redirection we do. If the request is an XHR done
+         by a client side Eliom program expecting a process page, we do not send
+         an HTTP redirection. In that case, we send a half XHR redirection. *)
       if not (Eliom_request_info.expecting_process_page ())
       then
-        (* the browser did not ask application eliom data, we send a
-           regular redirection *)
+        (* the browser did not ask application eliom data, we send a regular
+           redirection *)
         ( Ocsigen_header.Name.(to_string location)
         , status_of_redirection_options options code )
       else Eliom_common.half_xhr_redir_header, `OK
@@ -1300,24 +1295,22 @@ module Redirection_base = struct
     and headers = Ocsigen_header.of_option headers in
     (* Now we decide the kind of redirection we do.
 
-       If the request is an xhr done by a client side Eliom program
-       expecting a process page, we do not send an HTTP redirection.
-       In that case, we send:
+       If the request is an xhr done by a client side Eliom program expecting a
+       process page, we do not send an HTTP redirection. In that case, we send:
 
-       - a full xhr redirection if the application to which belongs
-         the destination service is the same (thus it will send back
-         tab cookies) (simulate a redirection without stopping the
-         client process)
+       - a full xhr redirection if the application to which belongs the
+       destination service is the same (thus it will send back tab cookies)
+       (simulate a redirection without stopping the client process)
 
-       - a half xhr redirection otherwise (i.e. ask the browser to do
-         an actual redirection).  *)
+       - a half xhr redirection otherwise (i.e. ask the browser to do an actual
+       redirection). *)
     match
       ( Eliom_request_info.expecting_process_page ()
       , Eliom_request_info.get_sp_client_appl_name () )
     with
     | true, None (* should not happen *) | false, _ ->
-        (* the browser did not ask for process data,we
-                     send a regular redirection *)
+        (* the browser did not ask for process data,we send a regular
+           redirection *)
         let status = status_of_redirection_options options code
         and headers =
           Cohttp.Header.replace headers
@@ -1337,15 +1330,15 @@ module Redirection_base = struct
             (* the appl name of the destination service *)
             | Eliom_service.XSame_appl (an, _) when an = anr ->
                 (* Same appl, we do a full XHR redirection (not an HTTP
-                redirection, because we want to send back tab cookies) *)
+                   redirection, because we want to send back tab cookies) *)
                 Eliom_common.full_xhr_redir_header
             | Eliom_service.XAlways ->
                 (* It is probably an action, or a void coservice. Full XHR
-                again *)
+                   again *)
                 Eliom_common.full_xhr_redir_header
             | _ ->
-                (* No application, or another application. We ask the
-                browser to do an HTTP redirection. *)
+                (* No application, or another application. We ask the browser to
+                   do an HTTP redirection. *)
                 Eliom_common.half_xhr_redir_header
             )
             uri

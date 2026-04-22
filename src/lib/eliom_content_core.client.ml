@@ -18,8 +18,7 @@
  *)
 
 (* This the core of [Eliom_content] without its dependencies to [Eliom_service],
-   [Eliom_client] et al.
-   Its name is not [Eliom_content_base] because this would
+   [Eliom_client] et al. Its name is not [Eliom_content_base] because this would
    suggest the sharing between server and client. *)
 
 open Js_of_ocaml
@@ -49,7 +48,7 @@ module Xml = struct
 
   and elt =
     { (* See Eliom_content.Html.To_dom for the 'unwrap' function that convert
-       the server's tree representation into the client one. *)
+         the server's tree representation into the client one. *)
       mutable elt : node lazy_t
     ; node_id : node_id
     }

@@ -21,8 +21,8 @@ open Js_of_ocaml
 open Eliom_lib
 include Eliom_cookies_base
 
-(* CCC The tables are indexed by the hostname, not the port appear.
-   there are no particular reason. If needed it is possible to add it *)
+(* CCC The tables are indexed by the hostname, not the port appear. there are no
+   particular reason. If needed it is possible to add it *)
 let cookie_tables :
     (float option * string * bool) Ocsigen_cookie_map.Map_inner.t
     Ocsigen_cookie_map.Map_path.t

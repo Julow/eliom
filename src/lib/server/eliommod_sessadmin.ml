@@ -32,13 +32,9 @@ open Lwt
 
 let section = Logs.Src.create "eliom:admin"
 
-(*
-   (** Iterator on volatile sessions *)
-let iter_sessions f =
+(* (** Iterator on volatile sessions *) let iter_sessions f =
 
-(** Iterator on persistent sessions *)
-let iter_persistent_sessions f =
-*)
+   (** Iterator on persistent sessions *) let iter_persistent_sessions f = *)
 
 let close_all_service_states2 full_st_name sitedata =
   Eliom_common.SessionCookies.fold
@@ -66,11 +62,8 @@ let close_all_service_states ~scope ~secure sitedata =
       secure ~scope
   in
   close_all_service_states2 full_st_name sitedata
-(*VVV Missing:
-   - close all sessions, whatever be the state_name
-   - secure
-   - close all groups (but closing sessions will close the groups (?))
-*)
+(*VVV Missing: - close all sessions, whatever be the state_name - secure - close
+  all groups (but closing sessions will close the groups (?)) *)
 
 let close_all_data_states2 full_st_name sitedata =
   Eliom_common.SessionCookies.fold
@@ -98,11 +91,8 @@ let close_all_data_states ~scope ~secure sitedata =
       secure ~scope
   in
   close_all_data_states2 full_st_name sitedata
-(*VVV Missing:
-   - close all sessions, whatever be the state_name
-   - secure
-   - close all groups (but closing sessions will close the groups (?))
-*)
+(*VVV Missing: - close all sessions, whatever be the state_name - secure - close
+  all groups (but closing sessions will close the groups (?)) *)
 
 let close_all_persistent_states2 full_st_name sitedata =
   Eliommod_cookies.Persistent_cookies.Cookies.iter
@@ -127,13 +117,10 @@ let close_all_persistent_states ~scope ~secure sitedata =
       secure ~scope
   in
   close_all_persistent_states2 full_st_name sitedata
-(*VVV Missing:
-   - close all sessions, whatever be the state_name
-   - secure
-   - close all groups (but closing sessions will close the groups (?))
-*)
+(*VVV Missing: - close all sessions, whatever be the state_name - secure - close
+  all groups (but closing sessions will close the groups (?)) *)
 
-(* Update the expiration date for all service sessions                      *)
+(* Update the expiration date for all service sessions *)
 let update_serv_exp full_st_name sitedata old_glob_timeout new_glob_timeout =
   Logs.app ~src:section (fun fmt ->
     fmt "Updating expiration date for all service sessions"
@@ -170,7 +157,7 @@ let update_serv_exp full_st_name sitedata old_glob_timeout new_glob_timeout =
         )
         sitedata.Eliom_common.session_services return_unit
 
-(* Update the expiration date for all in memory data sessions                *)
+(* Update the expiration date for all in memory data sessions *)
 let update_data_exp full_st_name sitedata old_glob_timeout new_glob_timeout =
   Logs.app ~src:section (fun fmt ->
     fmt "Updating expiration date for all data sessions"
@@ -207,7 +194,7 @@ let update_data_exp full_st_name sitedata old_glob_timeout new_glob_timeout =
         )
         sitedata.Eliom_common.session_data return_unit
 
-(* Update the expiration date for all sessions                               *)
+(* Update the expiration date for all sessions *)
 let update_pers_exp full_st_name sitedata old_glob_timeout new_glob_timeout =
   Logs.app ~src:section (fun fmt ->
     fmt "Updating expiration date for all persistent sessions"

@@ -97,9 +97,8 @@ let rec find_or_create_persistent_cookie_ ?set_max_in_group ?set_session_group
     let* set_session_group =
       match cookie_scope with
       | `Client_process n ->
-          (* We create a group whose name is the
-                   browser session cookie
-                   and put the tab session into it. *)
+          (* We create a group whose name is the browser session cookie and put
+             the tab session into it. *)
           let* r =
             find_or_create_persistent_cookie_
               ~set_max_in_group:
@@ -116,8 +115,8 @@ let rec find_or_create_persistent_cookie_ ?set_max_in_group ?set_session_group
     let c = Eliommod_cookies.make_new_session_id () in
     let hc = Eliom_common.Hashed_cookies.hash c in
     let hc_string = Eliom_common.Hashed_cookies.to_string hc in
-    (* We do not need to verify if it already exists.
-     make_new_session_id does never generate twice the same cookie. *)
+    (* We do not need to verify if it already exists. make_new_session_id does
+       never generate twice the same cookie. *)
     let usertimeout =
       ref Eliom_common.TGlobal
       (* See global table *)
@@ -168,8 +167,7 @@ let rec find_or_create_persistent_cookie_ ?set_max_in_group ?set_session_group
       >>= fun (_old, ior) ->
       match !ior with
       | Eliom_common.SCData_session_expired
-        (* We do not trust the value sent by the client,
-             for security reasons *)
+        (* We do not trust the value sent by the client, for security reasons *)
       | Eliom_common.SCNo_data ->
           new_persistent_cookie sitedata full_st_name >>= fun v ->
           ior := Eliom_common.SC v;
@@ -210,8 +208,8 @@ let find_or_create_persistent_cookie =
     )
 
 let find_persistent_cookie_only ~cookie_scope ~secure_o ?sp () =
-  (* If the cookie does not exist, do not create it, raise Not_found.
-     Returns the cookie info for the cookie *)
+  (* If the cookie does not exist, do not create it, raise Not_found. Returns
+     the cookie info for the cookie *)
   let sp = Eliom_common.sp_of_option sp in
   let cookie_level = Eliom_common.cookie_level_of_user_scope cookie_scope in
   let (_, _, cookie_info), secure_ci =

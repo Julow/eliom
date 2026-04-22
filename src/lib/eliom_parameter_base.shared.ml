@@ -207,7 +207,7 @@ let rec make_suffix : type a c. (a, 'b, c) params_type -> a -> string list =
      match params with Inj1 p -> make_suffix t1 p | Inj2 p -> make_suffix t2 p
    )
    | TESuffixs _ -> [params]
-   (* | TAny ->       (match params with [] -> [""] | p -> p) *)
+   (* | TAny -> (match params with [] -> [""] | p -> p) *)
    | TESuffix _ -> (
      match params with [] -> [""] | p -> p
    )
@@ -541,9 +541,8 @@ let rec wrap_param_type : type a c.
   | TUserType (name, tao) ->
       (* Eliom_common.To_and_of_shared.wrapper will take care of tao *)
       TUserType (name, tao)
-  (* We remove the type information here: not possible to send a
-     closure.  marshaling is just basic json marshaling on client
-     side. *)
+  (* We remove the type information here: not possible to send a closure.
+     marshaling is just basic json marshaling on client side. *)
   | TJson (name, _) -> TJson (name, None)
   (* the filter is only on server side (at least for now) *)
   | TTypeFilter (t, _) -> TTypeFilter (t, None)
@@ -572,8 +571,8 @@ let end_of_list lp pref =
   in
   not (List.exists f lp)
 
-(* The following function reconstructs the value of parameters from
-   expected type and GET or POST parameters *)
+(* The following function reconstructs the value of parameters from expected
+   type and GET or POST parameters *)
 let reconstruct_params_ typ params files nosuffixversion urlsuffix : 'a =
   let rec parse_suffix : type a c.
       (a, 'b, c) params_type -> string list -> a * string list =
@@ -767,9 +766,8 @@ let reconstruct_params_ typ params files nosuffixversion urlsuffix : 'a =
          in
          aux_set params files
      | TSum (t1, t2) -> (
-       (* We try to decode both cases, if both succeed,
-               we choose the one that consumes parameters
-               (or the 1st one if none consumes) *)
+       (* We try to decode both cases, if both succeed, we choose the one that
+          consumes parameters (or the 1st one if none consumes) *)
        try
          match aux t1 params files pref suff with
          | Res_ (v1, l1, files1) ->

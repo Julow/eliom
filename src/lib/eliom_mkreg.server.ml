@@ -63,21 +63,21 @@ type ('options, 'page, 'result) param =
   during a few seconds. Then redirect. But can we trust the browser cache?
 *)
 
-(* the test to know before page generation if the page can contain
-   application data. This test is not exhaustif: services declared as
-   XAlways can contain classical content, but we can't know it at this
-   point: we must wait for the page to be generated and then see if it
-   is effectively application content. *)
+(* the test to know before page generation if the page can contain application
+   data. This test is not exhaustif: services declared as XAlways can contain
+   classical content, but we can't know it at this point: we must wait for the
+   page to be generated and then see if it is effectively application
+   content. *)
 let check_before name service =
   match S.send_appl_content service (* the appl name of the service *) with
   | S.XSame_appl (an, _) when an = name -> (* Same appl, it is ok *) false
   | S.XAlways -> (* It is an action *) false
   | _ -> true
 
-(* This test check if there is a header set only by
-   Eliom_registration.App. This test is sufficient, but it is better
-   to stop page generation as soon as we know that the content won't
-   be needed: hence we test what we can before page generation. *)
+(* This test check if there is a header set only by Eliom_registration.App. This
+   test is sufficient, but it is better to stop page generation as soon as we
+   know that the content won't be needed: hence we test what we can before page
+   generation. *)
 let check_after name result =
   match
     Ocsigen_response.header result
@@ -96,16 +96,15 @@ let check_process_redir sp f param =
       (* the appl name as sent by browser *)
       | None -> false (* should not happen *)
       | Some anr -> f anr param
-      (* the browser asked application eliom data
-             (content only) for application anr *)
+      (* the browser asked application eliom data (content only) for application
+         anr *)
     else false
   in
   if redir
   then
     let ri = Eliom_request_info.get_ri_sp sp in
     Lwt.fail
-      (* we answer to the xhr
-         by asking an HTTP redirection *)
+      (* we answer to the xhr by asking an HTTP redirection *)
       (Eliom_common.Eliom_do_half_xhr_redirection
          ("/"
          ^ Eliom_lib.String.may_concat
@@ -203,17 +202,16 @@ let register_aux pages ?options ?charset ?code ?content_type ?headers table
                       Eliom_parameter.reconstruct_params ~sp sppt post_params
                         files false None
                       >>= fun p ->
-                      (* GRGR TODO: avoid
-                           Eliom_uri.make_string_uri_. But we need to
-                           "downcast" the type of service to the
-                           correct "get service". *)
+                      (* GRGR TODO: avoid Eliom_uri.make_string_uri_. But we
+                         need to "downcast" the type of service to the correct
+                         "get service". *)
                       ( if
                           Eliom_request_info.get_http_method () = `GET
                           && nosuffixversion && suffix_with_redirect
                         then (
                           if
-                            (* it is a suffix service in version
-                               without suffix. We redirect. *)
+                            (* it is a suffix service in version without suffix.
+                               We redirect. *)
                             not (Eliom_request_info.expecting_process_page ())
                           then
                             let redir_uri =
@@ -252,12 +250,10 @@ let register_aux pages ?options ?charset ?code ?content_type ?headers table
                             Lwt.fail
                               (Eliom_common.Eliom_do_redirection redir_uri)
                           else
-                            (* It is an internal application form.
-                               We don't redirect but we set this
-                               special information for url to be displayed
-                               by the browser
-                               (see Eliom_request_info.rebuild_uri_without_iternal_form_info_)
-                            *)
+                            (* It is an internal application form. We don't
+                               redirect but we set this special information for
+                               url to be displayed by the browser (see
+                               Eliom_request_info.rebuild_uri_without_iternal_form_info_) *)
                             let redir_uri =
                               Eliom_uri.make_string_uri_ ~service g
                             in
@@ -308,9 +304,8 @@ let register_aux pages ?options ?charset ?code ?content_type ?headers table
               if forsession
               then tablereg
               else
-                (* we do not register in global table,
-                         but in the table specified while creating
-                         the csrf safe service *)
+                (* we do not register in global table, but in the table
+                   specified while creating the csrf safe service *)
                 !(Eliom_state.get_session_service_table ?secure:secure_session
                     ~scope ~sp ()
                  )
@@ -337,9 +332,8 @@ let register_aux pages ?options ?charset ?code ?content_type ?headers table
               if forsession
               then tablereg
               else
-                (* we do not register in global table,
-                         but in the table specified while creating
-                         the csrf safe service *)
+                (* we do not register in global table, but in the table
+                   specified while creating the csrf safe service *)
                 !(Eliom_state.get_session_service_table ?secure:secure_session
                     ~scope ~sp ()
                  )
@@ -423,9 +417,8 @@ let register_aux pages ?options ?charset ?code ?content_type ?headers table
               if forsession
               then tablereg
               else
-                (* we do not register in global table,
-                         but in the table specified while creating
-                         the csrf safe service *)
+                (* we do not register in global table, but in the table
+                   specified while creating the csrf safe service *)
                 !(Eliom_state.get_session_service_table ?secure:secure_session
                     ~scope ~sp ()
                  )
@@ -452,9 +445,8 @@ let register_aux pages ?options ?charset ?code ?content_type ?headers table
               if forsession
               then tablereg
               else
-                (* we do not register in global table,
-                         but in the table specified while creating
-                         the csrf safe service *)
+                (* we do not register in global table, but in the table
+                   specified while creating the csrf safe service *)
                 !(Eliom_state.get_session_service_table ?secure:secure_session
                     ~scope ~sp ()
                  )
@@ -503,9 +495,9 @@ let register pages ?app:_ ?scope ?options ?charset ?code ?content_type ?headers
           if sitedata.Eliom_common.site_dir <> None
           then aux sitedata
           else
-            (* I suppose that it's a statically linked module
-               that is not associated with a site yet.
-               I will defer the registration until app is initialised. *)
+            (* I suppose that it's a statically linked module that is not
+               associated with a site yet. I will defer the registration until
+               app is initialised. *)
             Ocsigen_loader.add_module_init_function
               (Eliom_common.get_app_name ()) (fun () -> aux sitedata
             )
@@ -523,12 +515,10 @@ let register pages ?app:_ ?scope ?options ?charset ?code ?content_type ?headers
         (Right (sp, scope, secure_session))
         ~service page_gen
 
-(* WARNING: if we create a new service without registering it,
-     we can have a link towards a page that does not exist!!! :-(
-     That's why I impose to register all service during init.
-     The only other way I see to avoid this is to impose a syntax extension
-     like "let rec" for service...
-*)
+(* WARNING: if we create a new service without registering it, we can have a
+   link towards a page that does not exist!!! :-( That's why I impose to
+   register all service during init. The only other way I see to avoid this is
+   to impose a syntax extension like "let rec" for service... *)
 
 let create pages ?scope ?app ?options ?charset ?code ?content_type ?headers
     ?secure_session ?https ?name ?csrf_safe ?csrf_scope ?csrf_secure ?max_use

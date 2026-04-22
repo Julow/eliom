@@ -144,8 +144,8 @@ end = struct
     Logs.debug ~src:section (fun fmt ->
       fmt "Initialize injection %d" injection_id
     );
-    (* BBB One should assert that injection_value doesn't contain any
-       value marked for late unwrapping. How to do this efficiently? *)
+    (* BBB One should assert that injection_value doesn't contain any value
+       marked for late unwrapping. How to do this efficiently? *)
     Jstable.add table
       (Js.string (compilation_unit_id ^ string_of_int injection_id))
       injection_value
@@ -206,8 +206,8 @@ let register_unwrapped_elt, force_unwrapped_elts =
       List.iter Xml.force_lazy !suspended_nodes;
       suspended_nodes := [] )
 
-(* == Process nodes
-   (a.k.a. nodes with a unique Dom instance on each client process) *)
+(* == Process nodes (a.k.a. nodes with a unique Dom instance on each client
+   process) *)
 
 let register_process_node, find_process_node =
   let process_nodes : Dom.node Js.t Jstable.t = Jstable.create () in
@@ -243,8 +243,8 @@ let getElementById id =
     )
     (fun pnode -> pnode)
 
-(* == Request nodes
-   (a.k.a. nodes with a unique Dom instance in the current request) *)
+(* == Request nodes (a.k.a. nodes with a unique Dom instance in the current
+   request) *)
 
 let register_request_node, find_request_node, reset_request_nodes =
   let request_nodes : Dom.node Js.t Jstable.t ref = ref (Jstable.create ()) in
@@ -257,8 +257,8 @@ let register_request_node, find_request_node, reset_request_nodes =
   in
   let reset () =
     Logs.debug ~src:section (fun fmt -> fmt "Reset request nodes");
-    (* Unwrapped elements must be forced
-       before resetting the request node table. *)
+    (* Unwrapped elements must be forced before resetting the request node
+       table. *)
     force_unwrapped_elts ();
     request_nodes := Jstable.create ()
   in
@@ -266,9 +266,9 @@ let register_request_node, find_request_node, reset_request_nodes =
 
 (* == Organize the phase of loading or change_page
 
-   In the following functions, onload referrers the initial loading phase
-   *and* to the change_page phase
-   *and* to the loading phase after caml services (added 2016-03 --V). *)
+   In the following functions, onload referrers the initial loading phase *and*
+   to the change_page phase *and* to the loading phase after caml services
+   (added 2016-03 --V). *)
 
 let load_mutex = Lwt_mutex.create ()
 let _ = ignore (Lwt_mutex.lock load_mutex)
@@ -289,9 +289,8 @@ let in_onload, broadcast_load_end, wait_load_end, set_loading_phase =
 
 (* == Helper's functions for Eliom's event handler.
 
-   Allow conversion of Xml.event_handler to javascript closure and
-   their registration in Dom node.
-*)
+   Allow conversion of Xml.event_handler to javascript closure and their
+   registration in Dom node. *)
 
 (* forward declaration... *)
 let change_page_uri_ :
@@ -323,8 +322,8 @@ let raw_a_handler node cookies_info tmpl ev =
         || (https = Some false && Eliom_request_info.ssl_)
         )
   ||
-  ( (* If a link is clicked, we do not want to continue propagation
-       (for example if the link is in a wider clickable area)  *)
+  ( (* If a link is clicked, we do not want to continue propagation (for example
+       if the link is in a wider clickable area) *)
     Dom_html.stopPropagation ev;
     !change_page_uri_ ?cookies_info ?tmpl (Js.to_string href);
     false
@@ -471,27 +470,22 @@ let rebuild_class_list l1 l2 l3 =
 let rebuild_class_string l1 l2 l3 =
   rebuild_class_list l1 l2 l3 |> String.concat " " |> Js.string
 
-(* html attributes and dom properties use different names
-   **example**: maxlength vs maxLenght (case sensitive).
-   - Before dom react, it was enough to set html attributes only as
-   there were no update after creation.
-   - Dom React may update attributes later.
-   Html attrib changes are not taken into account if the corresponding
-   Dom property is defined.
-   **example**: updating html attribute `value` has no effect
-   if the dom property `value` has be set by the user.
+(* html attributes and dom properties use different names **example**: maxlength
+   vs maxLenght (case sensitive). - Before dom react, it was enough to set html
+   attributes only as there were no update after creation. - Dom React may
+   update attributes later. Html attrib changes are not taken into account if
+   the corresponding Dom property is defined. **example**: updating html
+   attribute `value` has no effect if the dom property `value` has be set by the
+   user.
 
-   =WE NEED TO SET DOM PROPERTIES=
-   -Tyxml only gives us html attribute names and we can set them safely.
-   -The name for dom properties is maybe different.
-    We set it only if we find out that the property
-    match_the_attribute_name / is_already_defined (get_prop).
-*)
+   =WE NEED TO SET DOM PROPERTIES= -Tyxml only gives us html attribute names and
+   we can set them safely. -The name for dom properties is maybe different. We
+   set it only if we find out that the property match_the_attribute_name /
+   is_already_defined (get_prop). *)
 
-(* TODO: fix get_prop
-   it only work when html attribute and dom property names correspond.
-   find a way to get dom property name corresponding to html attribute
-*)
+(* TODO: fix get_prop it only work when html attribute and dom property names
+   correspond. find a way to get dom property name corresponding to html
+   attribute *)
 
 let get_prop node name =
   if Js.Optdef.test (Js.Unsafe.get node name) then Some name else None
@@ -578,9 +572,9 @@ let rec rebuild_rattrib node ra =
       rebuild_rattrib node
         (Eliom_lib.from_poly (Eliom_lib.to_poly value) : Xml.attrib)
 
-(* TODO: Registering a global "onunload" event handler breaks the
-   'bfcache' mechanism of Firefox and Safari. We may try to use
-   "pagehide" whenever this event exists. See:
+(* TODO: Registering a global "onunload" event handler breaks the 'bfcache'
+   mechanism of Firefox and Safari. We may try to use "pagehide" whenever this
+   event exists. See:
 
    https://developer.mozilla.org/En/Using_Firefox_1.5_caching
 
@@ -597,27 +591,19 @@ module ReactState : sig
   val start_signal : (t -> unit React.signal) -> Dom.node Js.t
   val change_dom : t -> Dom.node Js.t -> unit
 end = struct
-  (*
-     ISSUE
-     =====
-     There is a conflict when many dom react are inside each other.
+  (* ISSUE ===== There is a conflict when many dom react are inside each other.
 
-     let s_lvl1 = S.map (function
-     | case1 -> ..
-     | case2 -> let s_lvl2 = ... in R.node s_lvl2) ...
-     in R.node s_lvl1
+     let s_lvl1 = S.map (function | case1 -> .. | case2 -> let s_lvl2 = ... in
+     R.node s_lvl2) ... in R.node s_lvl1
 
-     both dom react will update the same dom element (call it `dom_elt`) and
-     we have to prevent an (outdated) s_lvl2 signal
-     to replace `dom_elt` (updated last by a s_lvl1 signal)
+     both dom react will update the same dom element (call it `dom_elt`) and we
+     have to prevent an (outdated) s_lvl2 signal to replace `dom_elt` (updated
+     last by a s_lvl1 signal)
 
-     SOLUTION
-     ========
-     - we associate to the dom element an array of the signals that may update it
-     - when a dom element is updated, we transfer the signals to the appropriate
-       element: outer dom react are moved to the new element while inner dom react
-       are left to the old element.
-  *)
+     SOLUTION ======== - we associate to the dom element an array of the signals
+     that may update it - when a dom element is updated, we transfer the signals
+     to the appropriate element: outer dom react are moved to the new element
+     while inner dom react are left to the old element. *)
 
   class type ['a, 'b] weakMap = object
     method set : 'a -> 'b -> unit Js.meth
@@ -703,8 +689,8 @@ let rec rebuild_node' ns elt =
     match Xml.get_node_id elt with
     | Xml.NoId -> raw_rebuild_node ns raw_elt
     | Xml.RequestId _ ->
-        (* Do not look in request_nodes hashtbl: such elements have
-         been bind while unwrapping nodes. *)
+        (* Do not look in request_nodes hashtbl: such elements have been bind
+           while unwrapping nodes. *)
         let node = raw_rebuild_node ns raw_elt in
         Xml.set_dom_node elt node; node
     | Xml.ProcessId id ->
@@ -746,9 +732,9 @@ and raw_rebuild_node ns = function
       List.iter (fun c -> Dom.appendChild node (rebuild_node' ns c)) childrens;
       (node :> Dom.node Js.t)
 
-(* [is_before_initial_load] tests whether it is executed before the
-   loading of the initial document, e.g. during the initialization of the
-   (OCaml) module, i.e. before [Eliom_client_main.onload]. *)
+(* [is_before_initial_load] tests whether it is executed before the loading of
+   the initial document, e.g. during the initialization of the (OCaml) module,
+   i.e. before [Eliom_client_main.onload]. *)
 let is_before_initial_load, set_initial_load =
   let before_load = ref true in
   (fun () -> !before_load), fun () -> before_load := false

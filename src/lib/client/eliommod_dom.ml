@@ -37,13 +37,12 @@ let iter_attrList (attrList : Dom.attr Dom.namedNodeMap Js.t)
        Is it the same for attrList ? *)
     (* let v = attrList##item(i) in *)
     let v = Js.Unsafe.get attrList i in
-    (* IE8 provides [null] in node##attributes;
-       so we wrap v to be a Js.opt *)
+    (* IE8 provides [null] in node##attributes; so we wrap v to be a Js.opt *)
     Js.Opt.iter v f
   done
 
-(* Dummy type used in the following "test_*" functions to test the
-   presence of methods in various browsers. *)
+(* Dummy type used in the following "test_*" functions to test the presence of
+   methods in various browsers. *)
 class type dom_tester = object
   method compareDocumentPosition : unit Js.optdef Js.prop
   method querySelectorAll : unit Js.optdef Js.prop
@@ -145,8 +144,8 @@ let fast_select_nodes root =
 
 let slow_has_classes (node : Dom_html.element Js.t) =
   let classes =
-    (* IE<9: className is not set after change_page; getAttribute("class")
-       does not work for the initial document *)
+    (* IE<9: className is not set after change_page; getAttribute("class") does
+       not work for the initial document *)
     let str =
       if node##.className = Js.string ""
       then
@@ -331,24 +330,21 @@ let iter_dom_array (f : 'a -> unit)
 
 let copy_text t = Dom_html.document##(createTextNode t##.data)
 
-(* ie, ff3.6 and safari does not like setting innerHTML on html and
-   head nodes: we need to rebuild the HTML dom tree from the XML dom
-   tree received in the xhr *)
+(* ie, ff3.6 and safari does not like setting innerHTML on html and head nodes:
+   we need to rebuild the HTML dom tree from the XML dom tree received in the
+   xhr *)
 
-(* BEGIN IE<9 HACK:
-   appendChild is broken in ie:
-   see
-     http://webbugtrack.blogspot.com/2009/01/bug-143-createtextnode-doesnt-work-on.html
-     http://webbugtrack.blogspot.com/2007/10/bug-142-appendchild-doesnt-work-on.html
+(* BEGIN IE<9 HACK: appendChild is broken in ie: see
+   http://webbugtrack.blogspot.com/2009/01/bug-143-createtextnode-doesnt-work-on.html
+   http://webbugtrack.blogspot.com/2007/10/bug-142-appendchild-doesnt-work-on.html
 
-   This fix appending to script element.
-   TODO: it is also broken when appending tr to tbody, need to find a solution
-*)
+   This fix appending to script element. TODO: it is also broken when appending
+   tr to tbody, need to find a solution *)
 let add_childrens (elt : Dom_html.element Js.t) (sons : Dom.node Js.t list) =
   try List.iter (Dom.appendChild elt) sons
   with exn -> (
-    (* this code is ie only, there are no reason for an appendChild
-       to fail normally *)
+    (* this code is ie only, there are no reason for an appendChild to fail
+       normally *)
     let concat l =
       let rec concat acc = function
         | [] -> acc
@@ -367,11 +363,10 @@ let add_childrens (elt : Dom_html.element Js.t) (sons : Dom.node Js.t list) =
     match Dom_html.tagged elt with
     | Dom_html.Script elt -> elt##.text := concat sons
     | Dom_html.Style elt ->
-        (* we need to append the style node to something. If we
-         don't do that the styleSheet field is not created if we.
-         And we can't do it by creating it with the ie specific
-         document.createStyleSheet: the styleSheet field is not
-         initialised and it can't be set either. *)
+        (* we need to append the style node to something. If we don't do that
+           the styleSheet field is not created if we. And we can't do it by
+           creating it with the ie specific document.createStyleSheet: the
+           styleSheet field is not initialised and it can't be set either. *)
         let d = Dom_html.createHead Dom_html.document in
         Dom.appendChild d elt;
         (Js.Unsafe.coerce elt)##.styleSheet##.cssText := concat sons
@@ -403,8 +398,8 @@ let copy_element (e : Dom.element Js.t)
     | _ ->
         let add_attribute a =
           Js.Opt.iter (Dom.CoerceTo.attr a)
-            (* we don't use copy##attributes##setNameditem:
-             in ie 9 it fail setting types of buttons... *)
+            (* we don't use copy##attributes##setNameditem: in ie 9 it fail
+               setting types of buttons... *)
             (fun a -> copy##(setAttribute a##.name a##.value)
           )
         in
@@ -644,8 +639,8 @@ and rewrite_css_import ?(charset = "") ~max ~prefix ~media css pos =
               [media, Printf.sprintf "@import url('%s') %s;\n" href media']
           else if media##.length > 0 && String.length media' > 0
           then
-            (* TODO combine media if possible...
-               in the mean time keep explicit import. *)
+            (* TODO combine media if possible... in the mean time keep explicit
+               import. *)
             Lwt.return
               [media, Printf.sprintf "@import url('%s') %s;\n" href media']
           else
@@ -679,8 +674,8 @@ let build_style (e, css) =
       let style = Dom_html.createStyle Dom_html.document in
       style##._type := Js.string "text/css";
       style##.media := media;
-      (* IE8: Assigning to style##innerHTML results in
-          "Unknown runtime error" *)
+      (* IE8: Assigning to style##innerHTML results in "Unknown runtime
+         error" *)
       let styleSheet = Js.Unsafe.(get style (Js.string "styleSheet")) in
       if Js.Optdef.test styleSheet
       then Js.Unsafe.(set styleSheet (Js.string "cssText") (Js.string css))
@@ -708,8 +703,8 @@ let preload_css (doc : Dom_html.element Js.t) =
       with _ ->
         Logs.info
           ~src:
-            (* Node was a unique node that has been removed...
-                       in a perfect settings we won't have parsed it... *)
+            (* Node was a unique node that has been removed... in a perfect
+               settings we won't have parsed it... *)
             section (fun fmt -> fmt "Unique CSS skipped..."
         )
     )
@@ -720,9 +715,8 @@ let preload_css (doc : Dom_html.element Js.t) =
 
 (** Window scrolling *)
 
-(* Correct scrolling information in Chromium are found
-   Dom_html.document##body while on Firefox they are found on
-   Dom_html.document##documentElement. *)
+(* Correct scrolling information in Chromium are found Dom_html.document##body
+   while on Firefox they are found on Dom_html.document##documentElement. *)
 
 [@@@warning "-39"]
 
@@ -741,8 +735,8 @@ let createDocumentScroll () =
   ; body_left = Js.to_float Dom_html.document##.body##.scrollLeft
   }
 
-(* With firefox, the scroll position is restored before to fire the
-   popstate event. We maintain our own position. *)
+(* With firefox, the scroll position is restored before to fire the popstate
+   event. We maintain our own position. *)
 
 let current_position = ref top_position
 
@@ -769,9 +763,9 @@ let setDocumentScroll pos =
   Dom_html.document##.body##.scrollLeft := Js.float pos.body_left;
   current_position := pos
 
-(* UGLY HACK for Opera bug: Opera seem does not always take into
-   account the content of the base element. If we touch it like that,
-   it remember its presence... *)
+(* UGLY HACK for Opera bug: Opera seem does not always take into account the
+   content of the base element. If we touch it like that, it remember its
+   presence... *)
 let touch_base () =
   Js.Opt.iter
     (Js.Opt.bind
@@ -785,20 +779,21 @@ let touch_base () =
       e##.href := href
     )
 
-(* BEGIN FORMDATA HACK: This is only needed if FormData is not available in the browser.
-   When it will be commonly available, remove all sections marked by "FORMDATA HACK" !
-   Notice: this hack is used to circumvent a limitation in FF4 implementation of formdata:
-     if the user click on a button in a form, formdatas created in the onsubmit callback normally contains the value of the button. ( it is the behaviour of chromium )
-     in FF4, it is not the case: we must do this hack to find which button was clicked.
+(* BEGIN FORMDATA HACK: This is only needed if FormData is not available in the
+   browser. When it will be commonly available, remove all sections marked by
+   "FORMDATA HACK" ! Notice: this hack is used to circumvent a limitation in FF4
+   implementation of formdata: if the user click on a button in a form,
+   formdatas created in the onsubmit callback normally contains the value of the
+   button. ( it is the behaviour of chromium ) in FF4, it is not the case: we
+   must do this hack to find which button was clicked.
 
-   NOTICE: this may not be corrected the way we want:
-     see https://bugzilla.mozilla.org/show_bug.cgi?id=647231
-     html5 will explicitly specify that chromium behaviour is wrong...
+   NOTICE: this may not be corrected the way we want: see
+   https://bugzilla.mozilla.org/show_bug.cgi?id=647231 html5 will explicitly
+   specify that chromium behaviour is wrong...
 
-   This is implemented in:
-   * this file -> here and called in load_eliom_data
-   * Eliom_request: in send_post_form
-   * in js_of_ocaml, module Form: the code to emulate FormData *)
+   This is implemented in: * this file -> here and called in load_eliom_data *
+   Eliom_request: in send_post_form * in js_of_ocaml, module Form: the code to
+   emulate FormData *)
 
 let onclick_on_body_handler event =
   ( match Dom_html.tagged (Dom_html.eventTarget event) with

@@ -166,8 +166,9 @@ let send ?with_credentials ?(expecting_process_page = false) ?cookies_info
     let https, path =
       match cookies_info with
       | Some c -> c
-      (* CCC Is it really necessary to allow to specify cookie_info here?
-         hence, is it necessary to send it with the links? (attribute data-eliom-cookie-info) *)
+      (* CCC Is it really necessary to allow to specify cookie_info here? hence,
+         is it necessary to send it with the links? (attribute
+         data-eliom-cookie-info) *)
       | None -> get_cookie_info_for_uri url
     in
     let host =
@@ -208,15 +209,13 @@ let send ?with_credentials ?(expecting_process_page = false) ?cookies_info
       else headers
     in
     let headers = Additional_headers.to_list () @ headers in
-    (* CCC *
-       For now we assume that an eliom application is not distributed
-       among different server with different hostnames:
-       to do that It is needed to change that part a bit to be able to
-       send the process name to every host serving eliom pages.
-       Do not send it to everybody: when doing a cross domain request
-       with additional headers like thoose, an OPTION request is done
-       before to check if the request is authorized. Some server does
-       not support it ( like google ones for instance ) *)
+    (* CCC * For now we assume that an eliom application is not distributed
+       among different server with different hostnames: to do that It is needed
+       to change that part a bit to be able to send the process name to every
+       host serving eliom pages. Do not send it to everybody: when doing a cross
+       domain request with additional headers like thoose, an OPTION request is
+       done before to check if the request is authorized. Some server does not
+       support it ( like google ones for instance ) *)
     let headers =
       match host with
       | Some host when host = Url.Current.host ->
@@ -241,11 +240,11 @@ let send ?with_credentials ?(expecting_process_page = false) ?cookies_info
     let get_args =
       if
         expecting_process_page
-        (* we add this parameter to ensure that the xhr request is
-         different from the normal ones: we can't ensure that the
-         browser won't cache the content of the page ( for instance
-         when clicking the back button ). That way we are sure that an
-         xhr answer won't be used in place of a normal answer. *)
+        (* we add this parameter to ensure that the xhr request is different
+           from the normal ones: we can't ensure that the browser won't cache
+           the content of the page ( for instance when clicking the back button
+           ). That way we are sure that an xhr answer won't be used in place of
+           a normal answer. *)
       then (Eliom_common.nl_get_appl_parameter, "true") :: get_args
       else get_args
     in
@@ -331,16 +330,15 @@ let send ?with_credentials ?(expecting_process_page = false) ?cookies_info
         else if
           r.XmlHttpRequest.code = 200
           || XmlHttpRequest.(r.code = 0 && r.content <> "")
-          (* HACK for file access within Cordova which yields code 0.
-                    Code 0 might mean a network error, but then we have no
-                    content. *)
+          (* HACK for file access within Cordova which yields code 0. Code 0
+             might mean a network error, but then we have no content. *)
         then Lwt.return (r.XmlHttpRequest.url, Some (result r))
         else Lwt.fail (Failed_request r.XmlHttpRequest.code)
       )
       (function
         | XmlHttpRequest.Wrong_headers (code, headers) -> (
-          (* We are requesting application content and the headers tels
-           us that the answer is not application content *)
+          (* We are requesting application content and the headers tels us that
+             the answer is not application content *)
           match headers Eliom_common.appl_name_header_name with
           | None | Some "" ->
               (* Empty appl_name for IE compat. *)
@@ -356,8 +354,7 @@ let send ?with_credentials ?(expecting_process_page = false) ?cookies_info
               if appl_name = current_appl_name
               then
                 assert false
-                (* we can't go here:
-                                     this case is already handled before *)
+                (* we can't go here: this case is already handled before *)
               else (
                 Logs.warn ~src:section (fun fmt ->
                   fmt

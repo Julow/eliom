@@ -78,8 +78,7 @@ let get_default kind user_scope =
 
 let set_timeout_ get set get_default update ?full_st_name ?cookie_level
     ~recompute_expdates override_configfile fromconfigfile sitedata t =
-  (* cookie_level is useful and mandatory
-         only if full_st_name is not present *)
+  (* cookie_level is useful and mandatory only if full_st_name is not present *)
   let def_bro, def_tab, tl = get sitedata in
   match full_st_name with
   | None -> (
@@ -87,12 +86,12 @@ let set_timeout_ get set get_default update ?full_st_name ?cookie_level
     match def_bro, def_tab, cookie_level with
     | Some (_, true), _, Some `Session when not override_configfile ->
         ()
-        (* if it has been set by config file
-                  and we do not ask to override, we do nothing *)
+        (* if it has been set by config file and we do not ask to override, we
+           do nothing *)
     | _, Some (_, true), Some `Client_process when not override_configfile ->
         ()
-        (* if it has been set by config file
-                  and we do not ask to override, we do nothing *)
+        (* if it has been set by config file and we do not ask to override, we
+           do nothing *)
     | _, _, Some `Session -> set sitedata (Some (t, fromconfigfile), def_tab, tl)
     | _, _, Some `Client_process ->
         set sitedata (def_bro, Some (t, fromconfigfile), tl)

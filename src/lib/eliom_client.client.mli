@@ -479,10 +479,10 @@ val push_history_dom : unit -> unit
     >> %}
 *)
 
-(* [set_max_dist_history_doms (Some n)] limits the number of cached DOMs
-   that are kept in memory. Thereby [n] is the maximum distance in history from
-   the active page. Thus if for instance [n = 1] then only the DOMs for the
-   previous and the next page are kept. *)
+(* [set_max_dist_history_doms (Some n)] limits the number of cached DOMs that
+   are kept in memory. Thereby [n] is the maximum distance in history from the
+   active page. Thus if for instance [n = 1] then only the DOMs for the previous
+   and the next page are kept. *)
 val set_max_dist_history_doms : int option -> unit
 
 val section : Logs.src

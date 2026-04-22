@@ -116,14 +116,13 @@ module Make (P : PARAM) = struct
               (fun () ->
                 Logs.info ~src:section (fun fmt -> fmt "Trying a service");
                 s_f nosuffixversion sp >>= fun p ->
-                (* warning: the list ll may change during funct
-                  if funct register something on the same URL!! *)
+                (* warning: the list ll may change during funct if funct
+                   register something on the same URL!! *)
                 Logs.info ~src:section (fun fmt ->
                   fmt "Page found and generated successfully"
                 );
-                (* If this is an anonymous coservice,
-                  we place it at the top of the dlist
-                  (limitation of number of coservices) *)
+                (* If this is an anonymous coservice, we place it at the top of
+                   the dlist (limitation of number of coservices) *)
                 ( match node with
                 | None -> ()
                 | Some node -> P.Node.up node
@@ -158,13 +157,10 @@ module Make (P : PARAM) = struct
     ( match node, toremove with
     | _, [] -> ()
     | Some node, _ ->
-        (* it is an anonymous coservice that has expired.
-                          We remove it form the dlist.
-                          This will do the removal from this table
-                          automatically.
-                          Note that in that case, toremove has length 1
-                          (like the initial list l).
-        *)
+        (* it is an anonymous coservice that has expired. We remove it form the
+           dlist. This will do the removal from this table automatically. Note
+           that in that case, toremove has length 1 (like the initial list
+           l). *)
         P.Node.remove node
     | None, _ -> (
       (* removing manually *)
@@ -214,9 +210,8 @@ module Make (P : PARAM) = struct
     | { Eliom_common.key_state = _, Eliom_common.SAtt_anon _
       ; key_meth = `Post | `Put | `Delete
       } -> (
-      (* Anonymous coservice:
-         - only one for each key
-         - we add a node in the dlist to limit their number *)
+      (* Anonymous coservice: - only one for each key - we add a node in the
+         dlist to limit their number *)
       try
         let (nodeopt, _), newt =
           P.Table.find key !tref, P.Table.remove key !tref
@@ -239,19 +234,18 @@ module Make (P : PARAM) = struct
         try
           (* verify that we haven't registered something similar *)
           let _, oldl = find_and_remove_id l s_id in
-          (* if there was an old version with the same id, we remove
-              it? *)
+          (* if there was an old version with the same id, we remove it? *)
           if sp = None
           then
-            (* but if there was already one with same generation, we
-                fail (if during initialisation) *)
+            (* but if there was already one with same generation, we fail (if
+               during initialisation) *)
             raise
               (Eliom_common.Eliom_duplicate_registration
                  (Url.string_of_url_path ~encode:false url_act)
               )
           else
-            (* We insert as last element so that services are tried
-                in registration order *)
+            (* We insert as last element so that services are tried in
+               registration order *)
             tref := P.Table.add key (None, oldl @ [service]) newt
         with Not_found -> tref := P.Table.add key (None, l @ [service]) newt
       with Not_found -> tref := P.Table.add key (None, [service]) !tref
@@ -267,8 +261,8 @@ module Make (P : PARAM) = struct
     )
 
   let remove_page_table _ _ tref key id =
-    (* Actually this does not remove empty directories.
-       But this will be done by the next service GC *)
+    (* Actually this does not remove empty directories. But this will be done by
+       the next service GC *)
     let nodeopt, l = P.Table.find key !tref in
     match nodeopt with
     | Some node ->
@@ -280,8 +274,8 @@ module Make (P : PARAM) = struct
         let newt = P.Table.remove key !tref in
         match remove_id l id with
         | [] -> tref := newt
-        (* In that case, we must remove it, otherwise we get
-         "Wrong parameters" instead of "404 Not found" *)
+        (* In that case, we must remove it, otherwise we get "Wrong parameters"
+           instead of "404 Not found" *)
         | newl -> tref := P.Table.add key (None, newl) newt
       )
 
@@ -442,8 +436,8 @@ module Make (P : PARAM) = struct
         | a :: l -> aux (Some a) l
     in
     let search_by_priority_generation tables path =
-      (* New in 1.91: There is now one table for each pair
-         (generation, priority) *)
+      (* New in 1.91: There is now one table for each pair (generation,
+         priority) *)
       List.fold_left
         (fun prev (_prio, _gen, table) ->
           Lwt.catch
